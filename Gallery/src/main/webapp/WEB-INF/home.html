@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
+
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+</head>
+<body>
+	<header>
+		Welcome back <span th:text="${session.user.username}"> user</span>
+	</header>
+	<div class="main-container grid">
+		<div th:each="a:${myAlbums}">
+			<a th:href="@{/OpenAlbum(albumId=${a.Id})}">
+				<span th:text="${a.title}">title</span>
+			</a>
+		</div>
+
+		<div th:each="a:${otherAlbums}">
+			<a th:href="@{/OpenAlbum(albumId=${a.Id})}">
+				<span th:text="${a.title}">title</span>
+			</a>
+		</div>
+
+	</div>
+</body>
+</html>
