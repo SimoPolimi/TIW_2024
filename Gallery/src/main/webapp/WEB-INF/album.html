@@ -1,41 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<link rel="stylesheet" type="text/css" media="all" href="css/mystyle.css" th:href="@{css/mystyle.css}" />
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
 
 <head>
 <meta charset="UTF-8">
 <title>Home</title>
 </head>
 <body>
-	<div>
-		<table class="logUser">
-			<tr>
-				<td>Welcome back <span th:text="${session.user.username}">user</span></td>
-				<!-- <td>&emsp;<a href="Logout">Logout</a></td> -->
-			</tr>
-		</table>
-	</div>
-	<div class="container">
-		<div class="column">
-			<div class="title">pollo 1</div>
-			<img src="https://www.focus.it/site_stored/imgs/0005/012/gallina-ovaiola.1020x680.jpg" alt="">
-		</div>
-		<div class="column">
-			<div class="title">Pollo 2</div>
-			<img src="https://www.focus.it/site_stored/imgs/0005/012/gallina-ovaiola.1020x680.jpg" alt="">
-		</div>
-		<div class="column">
-			<div class="title">Pollo 3</div>
-			<img src="https://www.focus.it/site_stored/imgs/0005/012/gallina-ovaiola.1020x680.jpg" alt="">
-		</div>
-		<div class="column">
-			<div class="title">Pollo 4</div>
-			<img src="https://www.focus.it/site_stored/imgs/0005/012/gallina-ovaiola.1020x680.jpg" alt="">
-		</div>
-		<div class="column">
-			<div class="title">Pollo 5</div>
-			<img src="https://www.focus.it/site_stored/imgs/0005/012/gallina-ovaiola.1020x680.jpg" alt="">
+	<header>
+		Welcome back&nbsp;<span th:text="${session.user.username}"> user</span>
+	</header>
+	<div class="main-container image-grid">
+		<div th:each="i:${images}">
+			<h1 th:text="${i.title}">title</h1>
+			<!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
+			<img th:src="@{'images/'+${i.path}}">
+			<span th:text="${i.description}">description</span>
 		</div>
 	</div>
 </body>

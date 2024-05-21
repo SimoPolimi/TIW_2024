@@ -12,21 +12,22 @@
 </head>
 <body>
 	<header>
-		Welcome back <span th:text="${session.user.username}"> user</span>
+		Welcome back&nbsp;<span th:text="${session.user.username}"> user</span>
 	</header>
 	<div class="main-container grid">
 		<div th:each="a:${myAlbums}">
-			<a th:href="@{/OpenAlbum(albumId=${a.Id})}">
+			<a th:href="@{/ViewAlbum(albumId=${a.Id})}">
 				<span th:text="${a.title}">title</span>
+				<span th:text="${a.id}">title</span>
 			</a>
 		</div>
 
 		<div th:each="a:${otherAlbums}">
-			<a th:href="@{/OpenAlbum(albumId=${a.Id})}">
+			<a th:href="@{/ViewAlbum(albumId=${a.Id})}">
 				<span th:text="${a.title}">title</span>
+				<span th:text="${a.id}">title</span>
 			</a>
 		</div>
-
 	</div>
 </body>
 </html>

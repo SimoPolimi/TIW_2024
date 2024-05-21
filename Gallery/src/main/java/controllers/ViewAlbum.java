@@ -18,8 +18,8 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import beans.Album;
-import dao.AlbumDAO;
+import beans.Image;
+import dao.ImageDAO;
 import utils.ConnectionHandler;
 
 @WebServlet("/ViewAlbum")
@@ -44,31 +44,22 @@ public class ViewAlbum extends HttpServlet {
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		AlbumDAO albumDAO = new AlbumDAO(connection);
-		List<Album> myAlbums = new ArrayList<Album>();
-		List<Album> otherAlbums = new ArrayList<Album>();
+		ImageDAO imageDAO = new ImageDAO(connection);
+		List<Image> images = new ArrayList<Image>();
 		
 		try {
-			myAlbums = albumDAO.showUserAlbums(1);
+			images = imageDAO.showAlbumImages(Integer.parseInt(request.getParameter("albumId")));
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
-		try {
-			otherAlbums = albumDAO.showOtherUserAlbums(1);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
+		}	
 	
 		// Redirect
-		String path = "/WEB-INF/home.html";
+		String path = "/WEB-INF/album.html";
 		ServletContext servletContext = getServletContext();
 		response.setContentType("text");
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		// return
-		webContext.setVariable("myAlbums", myAlbums);
-		webContext.setVariable("otherAlbums", otherAlbums);
+		webContext.setVariable("images", images);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 
