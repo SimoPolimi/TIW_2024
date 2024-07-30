@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
+
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+</head>
+<body class="image">
+	<header>
+		Welcome back&nbsp;<span th:text="${session.user.username}">
+			user</span>
+			<a th:href="@{/ViewAlbum(albumId=${albumId}, pageNumber=${pageNumber})}"><img src="back.png" class="icon"></a>
+			<a href="ViewHome"><img src="home.png" class="icon"></a>
+	</header>
+	<div class="image-container">
+		<span th:text="${clickedImage.title}" class="image-title">title</span>
+		<img th:src="@{'images/'+${clickedImage.path}}" class="big">
+		<span th:text="${clickedImage.description}">description</span>
+		<span th:text="${clickedImage.creation_date}">creation date</span>
+		<span th:text="${clickedImage.id_user}">user</span>
+		<div th:each="c:${comments}">
+			<span th:text="${c.id_user}">user</span>
+			<span th:text="${c.text}">comment</span>
+			<span th:text="${c.date}">date</span>
+		</div>
+		<!-- Todo  -->
+		<a th:if="${session.user.id == clickedImage.id_user}" th:href="@{/TODO}"><img src="trash.png" class="trash"></a>
+			
+			
+		<!-- In js action deve essere vuota!!!!!!!!!!!!! se no mi reindirizza alla servlet -->
+		<form th:action="@{/WriteComment(imageId=${clickedImage.id})}" method="post" class="over">
+			<input class="round" type="text" name="text" placeholder="Insert comment here" required>
+			<button type="submit" value="send" class="btn btn-primary">Send</button>
+		</form>
+	</div>
+</body>
+</html>

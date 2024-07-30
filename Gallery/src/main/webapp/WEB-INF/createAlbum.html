@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
+
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+</head>
+<body>
+	<header>
+		Welcome back&nbsp;<span th:text="${session.user.username}">
+			user</span>
+	</header>
+	<form th:action="@{/CreateAlbum()}" method="post">
+		<input class="round" type="text" name="albumName" placeholder="Write here the name of your album" required th:value="${albumReceived}">
+		<div class="image-grid">
+			<div th:each="i:${images}">
+				<a th:href="@{/ViewImage(imageId=${i.Id})}">
+				<span th:text="${i.title}">title</span> 
+					<!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
+					<img th:src="@{'images/'+${i.path}}" class="in-album">
+				</a>
+				<input type="checkbox" th:name="@{'checked-'+${i.id}}">
+			</div>
+		</div>
+	</form>
+</body>
+</html>

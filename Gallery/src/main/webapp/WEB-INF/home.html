@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 <link rel="stylesheet" type="text/css" media="all"
 	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
 
@@ -12,21 +11,28 @@
 </head>
 <body>
 	<header>
-		Welcome back&nbsp;<span th:text="${session.user.username}"> user</span>
+		Welcome back&nbsp;<span th:text="${session.user.username}">user</span>
 	</header>
-	<div class="main-container grid">
-		<div th:each="a:${myAlbums}">
-			<a th:href="@{/ViewAlbum(albumId=${a.Id})}">
+	<div class="main-container">
+		<div class="column">
+		<h1>My albums</h1>
+			<div th:each="a:${myAlbums}" class="album-container">
 				<span th:text="${a.title}">title</span>
-				<span th:text="${a.id}">title</span>
-			</a>
+				<a th:href="@{/ViewAlbum(albumId=${a.Id}, pageNumber=0)}">
+					<img src="directory.png" class="directory">
+				</a>
+				<span th:text="${a.date}">date</span>
+			</div>
 		</div>
-
-		<div th:each="a:${otherAlbums}">
-			<a th:href="@{/ViewAlbum(albumId=${a.Id})}">
+		<div class="column">
+		<h1>Other albums</h1>
+			<div th:each="a:${otherAlbums}" class="album-container">
 				<span th:text="${a.title}">title</span>
-				<span th:text="${a.id}">title</span>
-			</a>
+				<a th:href="@{/ViewAlbum(albumId=${a.Id}, pageNumber=0)}">
+					<img src="directory.png" class="directory">
+				</a>
+				<span th:text="${a.date}">date</span>
+			</div>
 		</div>
 	</div>
 </body>

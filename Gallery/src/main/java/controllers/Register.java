@@ -22,14 +22,14 @@ import beans.User;
 import dao.UserDAO;
 import utils.ConnectionHandler;
 
-@WebServlet("/CheckLogin")
-public class CheckLogin extends HttpServlet {
+@WebServlet("/Register")
+public class Register extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
 
-	public CheckLogin() {
+	public Register() {
 		 super();
 	}
 	
@@ -51,10 +51,12 @@ public class CheckLogin extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String username = request.getParameter("username");
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
+		String confirmPassword = request.getParameter("confirmPassword");
 		
-		if(email == null || password == null || email.isBlank() || password.isBlank()) {
+		if(username == null || email == null || password == null || confirmPassword == null || username.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Blank or null credentials.");
 			return;
 		}
@@ -65,25 +67,30 @@ public class CheckLogin extends HttpServlet {
 		}
 		
 		UserDAO userDao = new UserDAO(connection);
-		User user = null;
+		boolean isNewUsername = false;
 		try {
-			user = userDao.checkCredentials(email, password);
+			isNewUsername = userDao.isNewUsername(username);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached.");
 		}
 		
 		String path;
-		if(user == null) { // Wrong credentials
-			ServletContext servletContext = getServletContext();
-			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-			webContext.setVariable("emailReceived", (email != null || !email.isBlank() ? email : ""));
-			webContext.setVariable("errorMsg", "Invalid credentials, wrong email or password.");
-			path = "/login.html";
-			templateEngine.process(path, webContext, response.getWriter());
-		} else { // Correct credentials, redirect to Home
-			request.getSession().setAttribute("user", user);
-			path = getServletContext().getContextPath() + "/ViewHome";
-			response.sendRedirect(path);
+		if(!isNewUsername || !isValidEmail(email)) { // Wrong credentials
+			 
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		}
 	}
 	

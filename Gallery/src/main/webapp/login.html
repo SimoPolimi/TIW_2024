@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" media="all"
 	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
 
@@ -10,16 +8,15 @@
 <title>Login</title>
 </head>
 <body class="login">
-	<div class="main-container">
+	<div>
 		<form action="CheckLogin" method="post">
 			<div class="card">
 				<h2>Gallery</h2>
-				<input class="round" type="email" name="email" placeholder="Email"
-					required th:value="${emailReceived}"> <input class="round"
-					type="password" name="password" placeholder="Password" required>
+				<input class="round" type="email" name="email" placeholder="Email" required th:value="${emailReceived}">
+				<input class="round" type="password" name="password" placeholder="Password" required>
 				<p th:text="${errorMsg}"></p>
 				<button type="submit" value="login" class="btn btn-primary">Login</button>
-				<a href="register.html">Register</a>
+				<a href="registration.html">Register</a>
 			</div>
 		</form>
 	</div>

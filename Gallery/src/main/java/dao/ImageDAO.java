@@ -16,15 +16,15 @@ public class ImageDAO {
 		this.connection = connection;
 	}
 
-	public List<Image> showAlbumImages(int albumId) throws SQLException {
+	public List<Image> showAlbumImages(int albumId, int limit, int offset) throws SQLException {
 		List<Image> images = new ArrayList<Image>();
-		String query = "SELECT image.* FROM image "
-				+ "INNER JOIN album_image on image.id=album_image.id_image "
-				+ "INNER JOIN album on album_image.id_album=album.id "
-				+ "WHERE album.id=?;";
+		String query = "SELECT image.* FROM image " + "INNER JOIN album_image on image.id=album_image.id_image "
+				+ "INNER JOIN album on album_image.id_album=album.id " + "WHERE album.id=? ORDER BY creation_date DESC LIMIT ? OFFSET ?;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, albumId);
+			pstatement.setInt(2, limit);
+			pstatement.setInt(3, offset);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
@@ -45,4 +45,42 @@ public class ImageDAO {
 		return images;
 	}
 	
+	public int countImagesByAlbumId(int albumId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM album_image WHERE id_album = ?";
+        try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+        	pstatement.setInt(1, albumId);
+            ResultSet result = pstatement.executeQuery();
+            if (!result.isBeforeFirst()) // no results
+				return 0;
+			else {
+				result.next();
+				return result.getInt(1);
+			}
+        }
+    }
+
+	public Image showImage(int imageId) throws SQLException {
+		Image image = new Image();
+		String query = "SELECT * FROM image "
+		+ "WHERE id=?;";
+
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setInt(1, imageId);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst())
+					return null;
+				else {
+					result.next();
+					image.setId(result.getInt("id"));
+					image.setId_user(result.getInt("id_user"));
+					image.setTitle(result.getString("title"));
+					image.setCreation_date(result.getDate("creation_date"));
+					image.setDescription(result.getString("description"));
+					image.setPath(result.getString("path"));
+					return image;
+				}
+			}
+		}	
+	}
+
 }

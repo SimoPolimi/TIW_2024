@@ -18,7 +18,7 @@ public class AlbumDAO {
 
 	public List<Album> showUserAlbums(int owner) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
-		String query = "SELECT  * FROM album WHERE owner = ? ORDER BY creation_date";
+		String query = "SELECT  * FROM album WHERE owner = ? ORDER BY creation_date DESC";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, owner);
@@ -30,6 +30,8 @@ public class AlbumDAO {
 						Album album = new Album();
 						album.setId(result.getInt("id"));
 						album.setTitle(result.getString("title"));
+						album.setOwner(result.getString("owner"));
+						album.setDate(result.getDate("creation_date"));
 						albums.add(album);
 					}
 				}
@@ -40,12 +42,12 @@ public class AlbumDAO {
 	
 	public List<Album> showOtherUserAlbums(int user) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
-		String query = "SELECT  * FROM album WHERE owner <> ? ORDER BY creation_date";
+		String query = "SELECT  * FROM album WHERE owner <> ? ORDER BY creation_date DESC";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, user);
 			try (ResultSet result = pstatement.executeQuery();) {
-				if (!result.isBeforeFirst()) // no results, credential check failed
+				if (!result.isBeforeFirst())
 					return null;
 				else {
 					while (result.next()) {

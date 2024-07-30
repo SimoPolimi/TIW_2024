@@ -18,21 +18,20 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import beans.Comment;
 import beans.Image;
+import dao.CommentDAO;
 import dao.ImageDAO;
 import utils.ConnectionHandler;
 
-@WebServlet("/ViewAlbum")
-public class ViewAlbum extends HttpServlet {
+@WebServlet("/ViewImage")
+public class ViewImage extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
-	
-	/* Constant */
-	private static final int IMAGES_PER_PAGE = 5;
 
-	public ViewAlbum() {
+	public ViewImage() {
 		super();
 	}
 
@@ -47,38 +46,39 @@ public class ViewAlbum extends HttpServlet {
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// Image
 		ImageDAO imageDAO = new ImageDAO(connection);
-		List<Image> images = new ArrayList<Image>();
-		int albumId = Integer.parseInt(request.getParameter("albumId"));
-		int pageNumber; /* Starts from 0 */
-		if(request.getParameter("pageNumber") == null) {
-			pageNumber = 0;
-		} else {
-			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
-		}
-			
-		int totalPages = 0;
-		
-		/* TODO: CONTROLLA pageNumber */
+		Image image = new Image();
 		
 		try {
-			int offset = pageNumber * IMAGES_PER_PAGE;
-			images = imageDAO.showAlbumImages(albumId, IMAGES_PER_PAGE, offset);
-			int totalImages = imageDAO.countImagesByAlbumId(albumId);
-            totalPages = (int) Math.ceil((double) totalImages / IMAGES_PER_PAGE);
+			image = imageDAO.showImage(Integer.parseInt(request.getParameter("imageId")));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		// Comments
+		
+		CommentDAO commentDAO = new CommentDAO(connection);
+		List<Comment> comments = new ArrayList<Comment>();
+		
+		try {
+			comments = commentDAO.showImageComments(Integer.parseInt(request.getParameter("imageId")));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}	
-	
+			
 		// Redirect
-		String path = "/WEB-INF/album.html";
+		String path = "/WEB-INF/image.html";
 		ServletContext servletContext = getServletContext();
 		response.setContentType("text");
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		// return
-		webContext.setVariable("images", images);
-		webContext.setVariable("currentPage", pageNumber);
-		webContext.setVariable("totalPages", totalPages);
+		webContext.setVariable("clickedImage", image);
+		webContext.setVariable("comments", comments);
+		// To go back to albums
+		// TODO: check
+		webContext.setVariable("albumId", Integer.parseInt(request.getParameter("albumId")));
+		webContext.setVariable("pageNumber", Integer.parseInt(request.getParameter("pageNumber")));
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 

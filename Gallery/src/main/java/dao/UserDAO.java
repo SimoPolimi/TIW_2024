@@ -31,4 +31,19 @@ public class UserDAO {
 			}
 		}
 	}
+	
+	public boolean isNewUsername(String username) throws SQLException {
+		String query = "SELECT username FROM user WHERE username = ?";
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setString(1, username);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					return true;
+				else {
+					result.next();
+					return false;
+				}
+			}
+		}
+	}
 }

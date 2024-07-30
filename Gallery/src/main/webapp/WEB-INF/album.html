@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" media="all"
 	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
 
@@ -12,15 +10,25 @@
 </head>
 <body>
 	<header>
-		Welcome back&nbsp;<span th:text="${session.user.username}"> user</span>
+		Welcome back&nbsp;<span th:text="${session.user.username}">
+			user</span>
+			<a href="ViewHome"><img src="home.png" class="icon"></a>
 	</header>
-	<div class="main-container image-grid">
+	<div class="image-grid">
 		<div th:each="i:${images}">
-			<h1 th:text="${i.title}">title</h1>
-			<!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
-			<img th:src="@{'images/'+${i.path}}">
-			<span th:text="${i.description}">description</span>
+		<!-- TODO: check -->
+		<span th:text="${i.title}">title</span>
+			<a th:href="@{/ViewImage(imageId=${i.Id}, albumId=${param.albumId}, pageNumber=${param.pageNumber})}">  <!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
+				<img th:src="@{'images/'+${i.path}}" class="in-album">
+			</a>
+			<span th:text="${i.creation_date}">creation date</span>
 		</div>
 	</div>
+	
+	<!-- pageNumber from 0 to totalPages-1 -->
+	<div class="center">
+    	<a th:if="${currentPage > 0}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage - 1})}">Prev</a>
+    	<a th:if="${currentPage < totalPages-1}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage + 1})}">Next</a>
+    </div>
 </body>
 </html>
