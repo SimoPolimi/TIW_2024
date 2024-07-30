@@ -16,7 +16,7 @@
 	</header>
 	<div class="image-grid">
 		<div th:each="i:${images}">
-		<!-- TODO: check -->
+		<!-- TODO: check --> 
 		<span th:text="${i.title}">title</span>
 			<a th:href="@{/ViewImage(imageId=${i.Id}, albumId=${param.albumId}, pageNumber=${param.pageNumber})}">  <!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
 				<img th:src="@{'images/'+${i.path}}" class="in-album">
