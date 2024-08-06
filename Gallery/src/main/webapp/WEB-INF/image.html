@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 <title>Home</title>
 </head>
-<body class="image">
+<body>
 	<header>
 		Welcome back&nbsp;<span th:text="${session.user.username}">
 			user</span>
@@ -21,10 +21,11 @@
 		<span th:text="${clickedImage.description}">description</span>
 		<span th:text="${clickedImage.creation_date}">creation date</span>
 		<span th:text="${clickedImage.id_user}">user</span>
+		<h2>Comments:</h2>
 		<div th:each="c:${comments}">
-			<span th:text="${c.id_user}">user</span>
+			<b><span th:text="${c.username}+':'">user</span></b>
 			<span th:text="${c.text}">comment</span>
-			<span th:text="${c.date}">date</span>
+			<i><span th:text="'('+${c.date}+')'">date</span></i>
 		</div>
 		<!-- Todo  -->
 		<a th:if="${session.user.id == clickedImage.id_user}" th:href="@{/TODO}"><img src="trash.png" class="trash"></a>

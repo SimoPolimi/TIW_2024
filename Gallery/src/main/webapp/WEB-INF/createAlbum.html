@@ -14,18 +14,17 @@
 		Welcome back&nbsp;<span th:text="${session.user.username}">
 			user</span>
 	</header>
-	<form th:action="@{/CreateAlbum()}" method="post">
-		<input class="round" type="text" name="albumName" placeholder="Write here the name of your album" required th:value="${albumReceived}">
+	<form th:action="@{/CreateAlbum}" method="post">
+		<input class="round" type="text" name="title" placeholder="Write here the name of your album" required>
 		<div class="image-grid">
-			<div th:each="i:${images}">
-				<a th:href="@{/ViewImage(imageId=${i.Id})}">
+			<div th:each="i:${images}" class="image-item">
 				<span th:text="${i.title}">title</span> 
 					<!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
-					<img th:src="@{'images/'+${i.path}}" class="in-album">
-				</a>
-				<input type="checkbox" th:name="@{'checked-'+${i.id}}">
+					<img th:src="@{'images/'+${i.path}}">
+				<input type="checkbox" name="selectedImages" th:value="${i.id}">
 			</div>
 		</div>
+		<button type="submit" value="create" class="btn btn-primary">Create album</button>
 	</form>
 </body>
 </html>

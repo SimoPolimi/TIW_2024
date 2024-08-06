@@ -14,21 +14,31 @@
 			user</span>
 			<a href="ViewHome"><img src="home.png" class="icon"></a>
 	</header>
-	<div class="image-grid">
-		<div th:each="i:${images}">
-		<!-- TODO: check --> 
-		<span th:text="${i.title}">title</span>
-			<a th:href="@{/ViewImage(imageId=${i.Id}, albumId=${param.albumId}, pageNumber=${param.pageNumber})}">  <!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
-				<img th:src="@{'images/'+${i.path}}" class="in-album">
-			</a>
-			<span th:text="${i.creation_date}">creation date</span>
-		</div>
-	</div>
+	<div class="table-container">
 	
 	<!-- pageNumber from 0 to totalPages-1 -->
-	<div class="center">
-    	<a th:if="${currentPage > 0}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage - 1})}">Prev</a>
-    	<a th:if="${currentPage < totalPages-1}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage + 1})}">Next</a>
+	<a th:if="${currentPage > 0}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage - 1})}">Prev</a>
+	    	
+	<table class="image-table">
+		<tr>
+			<td th:each="i:${images}" class="fixed-cell">
+			<!-- Image present -->
+			<div th:if="${i != null}">
+				<span th:text="${i.title}">title</span>
+				<a th:href="@{/ViewImage(imageId=${i.Id}, albumId=${param.albumId}, pageNumber=${param.pageNumber})}">  <!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
+					<img th:src="@{'images/'+${i.path}}" class="in-album">
+				</a>
+				<span th:text="${i.creation_date}">creation date</span>
+				</div>
+				<!-- Image not present -->
+				<div th:if="${i == null}" class="empty-cell"></div>
+			</td>
+		</tr>
+		
+	</table>
+
+    <a th:if="${currentPage < totalPages-1}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage + 1})}">Next</a>
+
     </div>
 </body>
 </html>

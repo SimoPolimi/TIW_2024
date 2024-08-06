@@ -50,6 +50,7 @@ public class ViewAlbum extends HttpServlet {
 		ImageDAO imageDAO = new ImageDAO(connection);
 		List<Image> images = new ArrayList<Image>();
 		int albumId = Integer.parseInt(request.getParameter("albumId"));
+		int totalPages = 0;
 		int pageNumber; /* Starts from 0 */
 		if(request.getParameter("pageNumber") == null) {
 			pageNumber = 0;
@@ -57,15 +58,23 @@ public class ViewAlbum extends HttpServlet {
 			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
 		}
 			
-		int totalPages = 0;
 		
-		/* TODO: CONTROLLA pageNumber */
-		
+			
 		try {
 			int offset = pageNumber * IMAGES_PER_PAGE;
 			images = imageDAO.showAlbumImages(albumId, IMAGES_PER_PAGE, offset);
 			int totalImages = imageDAO.countImagesByAlbumId(albumId);
             totalPages = (int) Math.ceil((double) totalImages / IMAGES_PER_PAGE);
+            
+            /* fills with null images to fill table cells */
+            /*****************************************************/
+            if(images != null) {
+            	while (images.size() < 5) {
+            		images.add(null);
+            	}
+            }
+            /*****************************************************/
+            
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}	

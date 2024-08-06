@@ -82,5 +82,39 @@ public class ImageDAO {
 			}
 		}	
 	}
+	
+	public List<Image> showMyImages(int userId) throws SQLException {
+		List<Image> images = new ArrayList<Image>();
+		String query = "SELECT * FROM image where id_user = ?;";
 
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setInt(1, userId);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results, credential check failed
+					return null;
+				else {
+					while (result.next()) {
+						Image image = new Image();
+						image.setId(result.getInt("id"));
+						image.setId_user(result.getInt("id_user"));
+						image.setTitle(result.getString("title"));
+						image.setCreation_date(result.getDate("creation_date"));
+						image.setDescription(result.getString("description"));
+						image.setPath(result.getString("path"));
+						images.add(image);
+					}
+				}
+			}
+		}
+		return images;
+	}
+
+	public void deleteImage(int imageId) throws SQLException {
+        String query = "DELETE FROM image WHERE id = ?";
+
+        try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+            pstatement.setInt(1, imageId);
+            pstatement.executeUpdate();
+        }
+    }
 }

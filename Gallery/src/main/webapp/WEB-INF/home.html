@@ -12,8 +12,11 @@
 <body>
 	<header>
 		Welcome back&nbsp;<span th:text="${session.user.username}">user</span>
-	</header>
-	<div class="main-container">
+	</header>	
+	<div class="center">
+		<a th:href="@{/ViewCreateAlbum}" class="btn-primary">Create album</a>
+	</div>
+	<div class="main-container">	
 		<div class="column">
 		<h1>My albums</h1>
 			<div th:each="a:${myAlbums}" class="album-container">
@@ -35,5 +38,6 @@
 			</div>
 		</div>
 	</div>
+	
 </body>
 </html>

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import beans.Comment;
+import beans.CommentWithUser;
 
 public class CommentDAO {
 	private Connection connection;
@@ -17,9 +17,9 @@ public class CommentDAO {
 		this.connection = connection;
 	}
 
-	public List<Comment> showImageComments(int imageId) throws SQLException {
-		List<Comment> comments = new ArrayList<Comment>();
-		String query = "SELECT * FROM comment WHERE id_image = ? ORDER BY date";
+	public List<CommentWithUser> showImageComments(int imageId) throws SQLException {
+		List<CommentWithUser> comments = new ArrayList<CommentWithUser>();
+		String query = "SELECT comment.*, user.username FROM comment INNER JOIN user ON comment.id_user = user.id  WHERE id_image = ? ORDER BY date";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, imageId);
@@ -28,10 +28,10 @@ public class CommentDAO {
 					return null;
 				else {
 					while (result.next()) {
-						Comment comment = new Comment();
+						CommentWithUser comment = new CommentWithUser();
 						comment.setId(result.getInt("id"));
 						comment.setId_image(result.getInt("id_image"));
-						comment.setId_user(result.getInt("id_user"));
+						comment.setUsername(result.getString("username"));
 						comment.setDate(result.getDate("date"));
 						comment.setText(result.getString("text"));
 						comments.add(comment);

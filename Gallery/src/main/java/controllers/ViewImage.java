@@ -18,7 +18,7 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import beans.Comment;
+import beans.CommentWithUser;
 import beans.Image;
 import dao.CommentDAO;
 import dao.ImageDAO;
@@ -59,7 +59,7 @@ public class ViewImage extends HttpServlet {
 		// Comments
 		
 		CommentDAO commentDAO = new CommentDAO(connection);
-		List<Comment> comments = new ArrayList<Comment>();
+		List<CommentWithUser> comments = new ArrayList<CommentWithUser>();
 		
 		try {
 			comments = commentDAO.showImageComments(Integer.parseInt(request.getParameter("imageId")));
@@ -77,8 +77,6 @@ public class ViewImage extends HttpServlet {
 		webContext.setVariable("comments", comments);
 		// To go back to albums
 		// TODO: check
-		webContext.setVariable("albumId", Integer.parseInt(request.getParameter("albumId")));
-		webContext.setVariable("pageNumber", Integer.parseInt(request.getParameter("pageNumber")));
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 

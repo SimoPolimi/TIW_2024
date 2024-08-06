@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -17,17 +19,18 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import beans.User;
-import dao.CommentDAO;
+import dao.AlbumDAO;
+import dao.AlbumImageDAO;
 import utils.ConnectionHandler;
 
-@WebServlet("/WriteComment")
-public class WriteComment extends HttpServlet {
+@WebServlet("/CreateAlbum")
+public class CreateAlbum extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
 
-	public WriteComment() {
+	public CreateAlbum() {
 		super();
 	}
 
@@ -42,31 +45,44 @@ public class WriteComment extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		CommentDAO commentDAO = new CommentDAO(connection);
-		String text = request.getParameter("text");
+		AlbumDAO albumDAO = new AlbumDAO(connection);
+		AlbumImageDAO albumImageDAO = new AlbumImageDAO(connection);
+		String title = request.getParameter("title");
 		
 		// Check parameter is present
-		if (text == null || text.isEmpty()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "missing text");
+		if (title == null || title.isEmpty()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "missing title");
 			return;
 		}
 		
 		LocalDate date = LocalDate.now();
 		java.sql.Date sqlDate = java.sql.Date.valueOf(date);
-		int imageId = Integer.parseInt(request.getParameter("imageId"));
 		int userId = ((User)request.getSession().getAttribute("user")).getId();
+		int albumId = 0;
 		
-		// TODO: do better
 		try {
-			commentDAO.writeComment(imageId, userId, sqlDate, text);
+			albumId = albumDAO.createAlbum(title, userId, sqlDate);
+			String[] imageIds = request.getParameterValues("selectedImages");
+            if (imageIds != null) {
+                List<Integer> imageIdList = new ArrayList<>();
+                for (String id : imageIds) {
+                    imageIdList.add(Integer.parseInt(id));
+                }
+                albumImageDAO.saveAlbumImages(albumId, imageIdList);
+            }
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		int albumId = Integer.parseInt(request.getParameter("albumId"));
-		int pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
-		String path = getServletContext().getContextPath() + "/ViewImage?imageId=" + imageId +"&albumId=" + albumId + "&pageNumber=" + pageNumber;
-		response.sendRedirect(path);
+		if(albumId != 0) {
+			String path = getServletContext().getContextPath() + "/ViewAlbum?albumId=" + albumId + "&pageNumber=0";
+			response.sendRedirect(path);
+		}else {
+			String path = getServletContext().getContextPath() + "/ViewHome";
+			response.sendRedirect(path);
+		}
+		
 	}
 
 }
