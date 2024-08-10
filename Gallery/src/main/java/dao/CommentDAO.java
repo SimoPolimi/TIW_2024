@@ -21,7 +21,7 @@ public class CommentDAO {
 		List<CommentWithUser> comments = new ArrayList<CommentWithUser>();
 		String query = "SELECT comment.*, user.username FROM comment INNER JOIN user ON comment.id_user = user.id  WHERE id_image = ? ORDER BY date";
 
-		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, imageId);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
@@ -38,7 +38,9 @@ public class CommentDAO {
 					}
 				}
 			}
-		}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		}		
 		return comments;
 	}
 	
@@ -46,22 +48,15 @@ public class CommentDAO {
 	// int????????????????????????????
 	public int writeComment(int imageId, int userId, Date date, String text) throws SQLException {
 		String query = "INSERT INTO comment (id_image, id_user, date, text) VALUES (?, ?, ?, ?)";
-		PreparedStatement pstatement = null;
 		int code = 0;		
-		try {
-			pstatement = connection.prepareStatement(query);
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, imageId);
 			pstatement.setInt(2, userId);
 			pstatement.setDate(3, date);
 			pstatement.setString(4, text);
 			code = pstatement.executeUpdate();
 		} catch (SQLException e) {
-		    e.printStackTrace();
 			throw new SQLException(e);
-		} finally {
-			try {
-				pstatement.close();
-			} catch (Exception e1) {}
 		}
 		return code;
 	}

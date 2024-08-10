@@ -21,7 +21,8 @@ public class AlbumDAO {
 		List<Album> albums = new ArrayList<Album>();
 		String query = "SELECT album.id, album.title, user.username as owner, album.creation_date FROM album INNER JOIN user ON album.owner = user.id WHERE owner = ? ORDER BY creation_date DESC";
 
-		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+		// Try-with-resources: automatic closure
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, owner);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
@@ -37,6 +38,8 @@ public class AlbumDAO {
 					}
 				}
 			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
 		}
 		return albums;
 	}
@@ -45,7 +48,7 @@ public class AlbumDAO {
 		List<Album> albums = new ArrayList<Album>();
 		String query = "SELECT album.id, album.title, user.username as owner, album.creation_date FROM album INNER JOIN user ON album.owner = user.id WHERE owner <> ? ORDER BY creation_date DESC";
 
-		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, user);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst())
@@ -61,6 +64,8 @@ public class AlbumDAO {
 					}
 				}
 			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
 		}
 		return albums;
 	}
@@ -82,7 +87,10 @@ public class AlbumDAO {
 		             }
 		         }
 		    }
-		    return 0;
+		    
+		} catch (SQLException e) {
+			throw new SQLException(e);
 		}
+		return 0;
 	}
 }

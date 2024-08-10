@@ -14,11 +14,9 @@ public class AlbumImageDAO {
 	
 	public int saveAlbumImages(int albumId, List<Integer> imageIds) throws SQLException {
         String query = "INSERT INTO album_image (id_album, id_image) VALUES (?, ?)";
-        PreparedStatement pstatement = null;
         int[] result = null;
 
-        try {
-            pstatement = connection.prepareStatement(query);
+        try (PreparedStatement pstatement = connection.prepareStatement(query)){
             for (int imageId : imageIds) {
                 pstatement.setInt(1, albumId);
                 pstatement.setInt(2, imageId);
@@ -27,16 +25,7 @@ public class AlbumImageDAO {
             /* Batch for multiple query in 1 access */
             result = pstatement.executeBatch();
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new SQLException(e);
-        } finally {
-            try {
-                if (pstatement != null) {
-                    pstatement.close();
-                }
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
         }
 
         // Checks how many rows updated
@@ -48,8 +37,7 @@ public class AlbumImageDAO {
                 }
             }
         }
-        System.out.print(rowsUpdated);
+        //System.out.print(rowsUpdated);
         return rowsUpdated;
-
     }
 }

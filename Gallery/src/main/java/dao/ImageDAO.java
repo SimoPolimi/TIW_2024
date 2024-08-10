@@ -24,7 +24,7 @@ public class ImageDAO {
 				+ "INNER JOIN user on image.id_user=user.id "
 				+ "WHERE album.id=? ORDER BY creation_date DESC LIMIT ? OFFSET ?;";
 
-		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, albumId);
 			pstatement.setInt(2, limit);
 			pstatement.setInt(3, offset);
@@ -44,6 +44,8 @@ public class ImageDAO {
 					}
 				}
 			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
 		}
 		return images;
 	}
@@ -59,7 +61,9 @@ public class ImageDAO {
 				result.next();
 				return result.getInt(1);
 			}
-        }
+        } catch (SQLException e) {
+			throw new SQLException(e);
+		}
     }
 
 	public Image showImage(int imageId) throws SQLException {
@@ -68,7 +72,7 @@ public class ImageDAO {
 				+ "INNER JOIN user on image.id_user=user.id "
 				+ "WHERE image.id=?;";
 
-		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, imageId);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst())
@@ -84,6 +88,8 @@ public class ImageDAO {
 					return image;
 				}
 			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
 		}	
 	}
 	
@@ -91,7 +97,7 @@ public class ImageDAO {
 		List<Image> images = new ArrayList<Image>();
 		String query = "SELECT * FROM image where id_user = ?;";
 
-		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, userId);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
@@ -108,6 +114,8 @@ public class ImageDAO {
 					}
 				}
 			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
 		}
 		return images;
 	}
@@ -118,6 +126,9 @@ public class ImageDAO {
         try (PreparedStatement pstatement = connection.prepareStatement(query)) {
             pstatement.setInt(1, imageId);
             pstatement.executeUpdate();
-        }
+        } catch (SQLException e) {
+			throw new SQLException(e);
+		}
+        return;
     }
 }
