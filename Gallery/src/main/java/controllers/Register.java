@@ -68,29 +68,38 @@ public class Register extends HttpServlet {
 		
 		UserDAO userDao = new UserDAO(connection);
 		boolean isNewUsername = false;
+		boolean isNewEmail = false;
 		try {
 			isNewUsername = userDao.isNewUsername(username);
+			isNewEmail = userDao.isNewEmail(email);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached (1).");
 		}
 		
 		String path;
-		if(!isNewUsername || !isValidEmail(email)) { // Wrong credentials
-			 
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+		if(!isNewUsername || !isNewEmail || !password.equals(confirmPassword)) { // Wrong credentials
+			ServletContext servletContext = getServletContext();
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("emailReceived", (email != null || !email.isBlank() ? email : ""));
+			if(!isNewUsername) {
+				webContext.setVariable("errorMsg", "Username already in use");
+			}else if(!isNewEmail) {
+				webContext.setVariable("errorMsg", "Email already in use");
+			}else if(!password.equals(confirmPassword)){
+				webContext.setVariable("errorMsg", "Password do not match");
+			}
+			path = "/registration.html";
+			templateEngine.process(path, webContext, response.getWriter());	
+		}else { // Correct parameters
+			User user = null;
+			try {
+				user = userDao.registerUser(username, email, password);
+			} catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached (2).");
+			}
+			request.getSession().setAttribute("user", user);
+			path = getServletContext().getContextPath() + "/ViewHome";
+			response.sendRedirect(path);
 		}
 	}
 	

@@ -1,6 +1,5 @@
 html, body {
 	height: 100%;
-	background-color: #555555;
 }
 
 h1, span {
@@ -139,7 +138,8 @@ table.image-table {
 
 .round{
 	border-radius: 10px;
-	margin: 1%;
+	margin-top: 1%;
+	margin-bottom: 1%;
 }
 
 input[type="email"], input[type="password"], input[type="text"]{
@@ -148,10 +148,7 @@ input[type="email"], input[type="password"], input[type="text"]{
     font-size: 1rem;
     line-height: 1.5;
     border: 1px solid #ced4da;
-}
-
-input[type="text"].wide {
-	width: 60%;
+    box-sizing: border-box;
 }
 
 /* Image page */
@@ -208,4 +205,14 @@ div.image-container {
 
 .image-item input[type="checkbox"] {
     margin-top: 5px;
+}
+
+.image-info{
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    background-color: #eeeeee;
+    border-radius: 4px;
+    font-size: 20px;
 }

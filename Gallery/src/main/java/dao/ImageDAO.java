@@ -18,8 +18,11 @@ public class ImageDAO {
 
 	public List<Image> showAlbumImages(int albumId, int limit, int offset) throws SQLException {
 		List<Image> images = new ArrayList<Image>();
-		String query = "SELECT image.* FROM image " + "INNER JOIN album_image on image.id=album_image.id_image "
-				+ "INNER JOIN album on album_image.id_album=album.id " + "WHERE album.id=? ORDER BY creation_date DESC LIMIT ? OFFSET ?;";
+		String query = "SELECT image.*, user.username FROM image "
+				+ "INNER JOIN album_image on image.id=album_image.id_image "
+				+ "INNER JOIN album on album_image.id_album=album.id "
+				+ "INNER JOIN user on image.id_user=user.id "
+				+ "WHERE album.id=? ORDER BY creation_date DESC LIMIT ? OFFSET ?;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, albumId);
@@ -32,7 +35,7 @@ public class ImageDAO {
 					while (result.next()) {
 						Image image = new Image();
 						image.setId(result.getInt("id"));
-						image.setId_user(result.getInt("id_user"));
+						image.setUsername(result.getString("username"));
 						image.setTitle(result.getString("title"));
 						image.setCreation_date(result.getDate("creation_date"));
 						image.setDescription(result.getString("description"));
@@ -61,8 +64,9 @@ public class ImageDAO {
 
 	public Image showImage(int imageId) throws SQLException {
 		Image image = new Image();
-		String query = "SELECT * FROM image "
-		+ "WHERE id=?;";
+		String query = "SELECT image.*, user.username FROM image "
+				+ "INNER JOIN user on image.id_user=user.id "
+				+ "WHERE image.id=?;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, imageId);
@@ -72,7 +76,7 @@ public class ImageDAO {
 				else {
 					result.next();
 					image.setId(result.getInt("id"));
-					image.setId_user(result.getInt("id_user"));
+					image.setUsername(result.getString("username"));
 					image.setTitle(result.getString("title"));
 					image.setCreation_date(result.getDate("creation_date"));
 					image.setDescription(result.getString("description"));
@@ -96,7 +100,6 @@ public class ImageDAO {
 					while (result.next()) {
 						Image image = new Image();
 						image.setId(result.getInt("id"));
-						image.setId_user(result.getInt("id_user"));
 						image.setTitle(result.getString("title"));
 						image.setCreation_date(result.getDate("creation_date"));
 						image.setDescription(result.getString("description"));

@@ -12,7 +12,9 @@
 	<header>
 		Welcome back&nbsp;<span th:text="${session.user.username}">
 			user</span>
-			<a href="ViewHome"><img src="home.png" class="icon"></a>
+			<a href="ViewHome"><img src="icons/home.png" class="icon"></a>
+			<span><a href="Logout">Logout</a></span>
+			
 	</header>
 	<div class="table-container">
 	
@@ -22,13 +24,13 @@
 	<table class="image-table">
 		<tr>
 			<td th:each="i:${images}" class="fixed-cell">
-			<!-- Image present -->
-			<div th:if="${i != null}">
-				<span th:text="${i.title}">title</span>
-				<a th:href="@{/ViewImage(imageId=${i.Id}, albumId=${param.albumId}, pageNumber=${param.pageNumber})}">  <!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
-					<img th:src="@{'images/'+${i.path}}" class="in-album">
-				</a>
-				<span th:text="${i.creation_date}">creation date</span>
+				<!-- Image present -->
+				<div th:if="${i != null}">
+					<span th:text="${i.title}">title</span>
+					<a th:href="@{/ViewImage(imageId=${i.Id}, albumId=${param.albumId}, pageNumber=${param.pageNumber})}">
+						<img th:src="@{'images/'+${i.path}}" class="in-album">
+					</a>
+					<!-- <span th:text="${i.creation_date}">creation date</span> -->
 				</div>
 				<!-- Image not present -->
 				<div th:if="${i == null}" class="empty-cell"></div>

@@ -19,7 +19,7 @@ public class AlbumDAO {
 
 	public List<Album> showUserAlbums(int owner) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
-		String query = "SELECT  * FROM album WHERE owner = ? ORDER BY creation_date DESC";
+		String query = "SELECT album.id, album.title, user.username as owner, album.creation_date FROM album INNER JOIN user ON album.owner = user.id WHERE owner = ? ORDER BY creation_date DESC";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, owner);
@@ -43,7 +43,7 @@ public class AlbumDAO {
 	
 	public List<Album> showOtherUserAlbums(int user) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
-		String query = "SELECT  * FROM album WHERE owner <> ? ORDER BY creation_date DESC";
+		String query = "SELECT album.id, album.title, user.username as owner, album.creation_date FROM album INNER JOIN user ON album.owner = user.id WHERE owner <> ? ORDER BY creation_date DESC";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, user);

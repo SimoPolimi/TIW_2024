@@ -39,9 +39,7 @@ public class DeleteImage extends HttpServlet {
 		templateResolver.setSuffix(".html");
 	}
 
-	/* TODO: test */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int imageId = Integer.parseInt(request.getParameter("imageId"));
 		ImageDAO imageDAO = new ImageDAO(connection);
 		
@@ -53,6 +51,9 @@ public class DeleteImage extends HttpServlet {
 		
 		String path = getServletContext().getContextPath() + "/ViewHome";
 		response.sendRedirect(path);
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
 	}
 
 }

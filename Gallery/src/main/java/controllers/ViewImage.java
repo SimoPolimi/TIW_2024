@@ -76,6 +76,9 @@ public class ViewImage extends HttpServlet {
 		webContext.setVariable("clickedImage", image);
 		webContext.setVariable("comments", comments);
 		// To go back to albums
+		webContext.setVariable("albumId", request.getParameter("albumId"));
+		webContext.setVariable("pageNumber", request.getParameter("pageNumber"));
+
 		// TODO: check
 		templateEngine.process(path, webContext, response.getWriter());
 	}
