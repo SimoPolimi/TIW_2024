@@ -13,6 +13,27 @@ public class UserDAO {
 	public UserDAO(Connection connection) {
 		this.connection = connection;
 	}
+	
+	public User getUserById(int id) throws SQLException{
+		String query = "SELECT  * FROM user WHERE id = ?";
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+			pstatement.setInt(1, id);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results, credential check failed
+					return null;
+				else {
+					result.next();
+					User user = new User();
+					user.setId(result.getInt("id"));
+					user.setUsername(result.getString("username"));
+					user.setEmail(result.getString("mail"));
+					return user;
+				}
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		}
+	}
 
 	public User checkCredentials(String mail, String password) throws SQLException {
 		String query = "SELECT  id, username FROM user  WHERE mail = ? AND password =?";

@@ -19,7 +19,7 @@ public class AlbumDAO {
 
 	public List<Album> showUserAlbums(int owner) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
-		String query = "SELECT album.id, album.title, user.username as owner, album.creation_date FROM album INNER JOIN user ON album.owner = user.id WHERE owner = ? ORDER BY creation_date DESC";
+		String query = "SELECT album.* FROM album WHERE owner = ? ORDER BY creation_date DESC";
 
 		// Try-with-resources: automatic closure
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
@@ -30,9 +30,10 @@ public class AlbumDAO {
 				else {
 					while (result.next()) {
 						Album album = new Album();
+						UserDAO userDAO = new UserDAO(connection);
 						album.setId(result.getInt("id"));
 						album.setTitle(result.getString("title"));
-						album.setOwner(result.getString("owner"));
+						album.setOwner(userDAO.getUserById(result.getInt("owner")));
 						album.setDate(result.getDate("creation_date"));
 						albums.add(album);
 					}
@@ -46,7 +47,7 @@ public class AlbumDAO {
 	
 	public List<Album> showOtherUserAlbums(int user) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
-		String query = "SELECT album.id, album.title, user.username as owner, album.creation_date FROM album INNER JOIN user ON album.owner = user.id WHERE owner <> ? ORDER BY creation_date DESC";
+		String query = "SELECT album.* FROM album WHERE owner <> ? ORDER BY creation_date DESC";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, user);
@@ -56,9 +57,10 @@ public class AlbumDAO {
 				else {
 					while (result.next()) {
 						Album album = new Album();
+						UserDAO userDAO = new UserDAO(connection);
 						album.setId(result.getInt("id"));
 						album.setTitle(result.getString("title"));
-						album.setOwner(result.getString("owner"));
+						album.setOwner(userDAO.getUserById(result.getInt("owner")));
 						album.setDate(result.getDate("creation_date"));
 						albums.add(album);
 					}

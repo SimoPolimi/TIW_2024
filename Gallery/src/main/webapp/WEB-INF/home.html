@@ -22,7 +22,7 @@
 		<h1>My albums</h1>
 			<div th:each="a:${myAlbums}" class="album-container">
 				<span th:text="${a.title}">title</span>
-				<span th:text="'(by '+${a.owner}+')'">(by owner)</span> 
+				<span th:text="'(by '+${a.owner.username}+')'">(by owner)</span> 
 				<a th:href="@{/ViewAlbum(albumId=${a.Id}, pageNumber=0)}">
 					<img src="icons/directory.png" class="directory">
 				</a>
@@ -33,7 +33,7 @@
 		<h1>Other albums</h1>
 			<div th:each="a:${otherAlbums}" class="album-container">
 				<span th:text="${a.title}">title</span>
-				<span th:text="'(by '+${a.owner}+')'">(by owner)</span> 
+				<span th:text="'(by '+${a.owner.username}+')'">(by owner)</span> 
 				<a th:href="@{/ViewAlbum(albumId=${a.Id}, pageNumber=0)}">
 					<img src="icons/directory.png" class="directory">
 				</a>

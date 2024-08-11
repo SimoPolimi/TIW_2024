@@ -2,11 +2,11 @@ package beans;
 
 import java.sql.Date;
 
-public class CommentWithUser {
+public class Comment {
 	
 	private int id;
-	private int id_image;
-	private String username;
+	private Image image;
+	private User user;
 	private Date date;
 	private String text;
 	
@@ -19,20 +19,20 @@ public class CommentWithUser {
 	}
 
 
-	public int getId_image() {
-		return id_image;
+	public Image getImage() {
+		return image;
 	}
 
-	public void setId_image(int id_image) {
-		this.id_image = id_image;
+	public void setImage(Image image) {
+		this.image = image;
 	}
 
-	public String getUsername() {
-		return username;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Date getDate() {

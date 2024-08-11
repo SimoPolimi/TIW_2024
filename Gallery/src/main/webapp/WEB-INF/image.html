@@ -21,17 +21,17 @@
 		<img th:src="@{'images/'+${clickedImage.path}}" class="big">
 		<div class="image-info">
 			<span th:text="${clickedImage.description}">description</span>
-			<span th:text="'Image uploaded by '+${clickedImage.username}">user</span>
+			<span th:text="'Image uploaded by '+${clickedImage.user.username}">user</span>
 			<i><span th:text="'('+${clickedImage.creation_date}+')'">creation date</span></i>
 		</div>
 		<h2>Comments:</h2>
 		<div th:each="c:${comments}">
-			<b><span th:text="${c.username}+':'">user</span></b>
+			<b><span th:text="${c.user.username}+':'">user</span></b>
 			<span th:text="${c.text}">comment</span>
 			<i><span th:text="'('+${c.date}+')'">date</span></i>
 		</div>
 		<!-- Todo  -->
-		<a th:if="${session.user.username == clickedImage.username}" th:href="@{/DeleteImage(imageId=${clickedImage.id})}"><img src="icons/trash.png" class="trash"></a>
+		<a th:if="${session.user.username = clickedImage.user.username}" th:href="@{/DeleteImage(imageId=${clickedImage.id})}"><img src="icons/trash.png" class="trash"></a>
 			
 			
 		<!-- In js action deve essere vuota!!!!!!!!!!!!! se no mi reindirizza alla servlet -->

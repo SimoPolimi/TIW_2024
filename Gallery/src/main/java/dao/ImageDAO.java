@@ -15,13 +15,38 @@ public class ImageDAO {
 	public ImageDAO(Connection connection) {
 		this.connection = connection;
 	}
+	
+	public Image getImageById(int id) throws SQLException{
+		String query = "SELECT  * FROM image WHERE id = ?";
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+			pstatement.setInt(1, id);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results, credential check failed
+					return null;
+				else {
+					result.next();
+					Image image = new Image();
+					UserDAO userDAO = new UserDAO(connection);
+					image.setId(result.getInt("id"));
+					image.setId(result.getInt("id"));
+					image.setUser(userDAO.getUserById(result.getInt("id_user")));
+					image.setTitle(result.getString("title"));
+					image.setCreation_date(result.getDate("creation_date"));
+					image.setDescription(result.getString("description"));
+					image.setPath(result.getString("path"));
+					return image;
+				}
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		}
+	}
 
 	public List<Image> showAlbumImages(int albumId, int limit, int offset) throws SQLException {
 		List<Image> images = new ArrayList<Image>();
-		String query = "SELECT image.*, user.username FROM image "
+		String query = "SELECT image.* FROM image "
 				+ "INNER JOIN album_image on image.id=album_image.id_image "
 				+ "INNER JOIN album on album_image.id_album=album.id "
-				+ "INNER JOIN user on image.id_user=user.id "
 				+ "WHERE album.id=? ORDER BY creation_date DESC LIMIT ? OFFSET ?;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
@@ -34,8 +59,9 @@ public class ImageDAO {
 				else {
 					while (result.next()) {
 						Image image = new Image();
+						UserDAO userDAO = new UserDAO(connection);
 						image.setId(result.getInt("id"));
-						image.setUsername(result.getString("username"));
+						image.setUser(userDAO.getUserById(result.getInt("id_user")));
 						image.setTitle(result.getString("title"));
 						image.setCreation_date(result.getDate("creation_date"));
 						image.setDescription(result.getString("description"));
@@ -68,8 +94,7 @@ public class ImageDAO {
 
 	public Image showImage(int imageId) throws SQLException {
 		Image image = new Image();
-		String query = "SELECT image.*, user.username FROM image "
-				+ "INNER JOIN user on image.id_user=user.id "
+		String query = "SELECT image.* FROM image "
 				+ "WHERE image.id=?;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
@@ -79,8 +104,9 @@ public class ImageDAO {
 					return null;
 				else {
 					result.next();
+					UserDAO userDAO = new UserDAO(connection);
 					image.setId(result.getInt("id"));
-					image.setUsername(result.getString("username"));
+					image.setUser(userDAO.getUserById(result.getInt("id_user")));
 					image.setTitle(result.getString("title"));
 					image.setCreation_date(result.getDate("creation_date"));
 					image.setDescription(result.getString("description"));

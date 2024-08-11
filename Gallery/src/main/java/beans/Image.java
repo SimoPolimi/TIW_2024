@@ -5,7 +5,7 @@ import java.sql.Date;
 public class Image {
 	
 	private int id;
-	private String username; // Username of the user who uploaded the image
+	private User user; // Username of the user who uploaded the image
 	private String title;
 	private Date creation_date;
 	private String description;
@@ -19,12 +19,12 @@ public class Image {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getTitle() {

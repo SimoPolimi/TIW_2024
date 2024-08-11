@@ -5,7 +5,7 @@ import java.sql.Date;
 public class Album {
 	
 	private int id;
-	private String owner;
+	private User owner;
 	private String title;
 	private Date date;
 	
@@ -17,11 +17,11 @@ public class Album {
 		this.id = id;
 	}
 
-	public String getOwner() {
+	public User getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
+	public void setOwner(User owner) {
 		this.owner = owner;
 	}
 
