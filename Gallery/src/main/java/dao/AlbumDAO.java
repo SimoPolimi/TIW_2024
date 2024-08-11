@@ -17,7 +17,7 @@ public class AlbumDAO {
 		this.connection = connection;
 	}
 
-	public List<Album> showUserAlbums(int owner) throws SQLException {
+	public List<Album> getUserAlbums(int owner) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
 		String query = "SELECT album.* FROM album WHERE owner = ? ORDER BY creation_date DESC";
 
@@ -45,7 +45,7 @@ public class AlbumDAO {
 		return albums;
 	}
 	
-	public List<Album> showOtherUserAlbums(int user) throws SQLException {
+	public List<Album> getOtherUserAlbums(int user) throws SQLException {
 		List<Album> albums = new ArrayList<Album>();
 		String query = "SELECT album.* FROM album WHERE owner <> ? ORDER BY creation_date DESC";
 

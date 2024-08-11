@@ -17,7 +17,7 @@ public class CommentDAO {
 		this.connection = connection;
 	}
 
-	public List<Comment> showImageComments(int imageId) throws SQLException {
+	public List<Comment> getImageComments(int imageId) throws SQLException {
 		List<Comment> comments = new ArrayList<Comment>();
 		String query = "SELECT comment.* FROM comment WHERE id_image = ? ORDER BY date";
 

@@ -51,7 +51,7 @@ public class ViewImage extends HttpServlet {
 		Image image = new Image();
 		
 		try {
-			image = imageDAO.showImage(Integer.parseInt(request.getParameter("imageId")));
+			image = imageDAO.getImageById(Integer.parseInt(request.getParameter("imageId")));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -62,7 +62,7 @@ public class ViewImage extends HttpServlet {
 		List<Comment> comments = new ArrayList<Comment>();
 		
 		try {
-			comments = commentDAO.showImageComments(Integer.parseInt(request.getParameter("imageId")));
+			comments = commentDAO.getImageComments(Integer.parseInt(request.getParameter("imageId")));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}	

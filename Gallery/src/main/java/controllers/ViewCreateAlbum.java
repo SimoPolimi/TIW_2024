@@ -50,7 +50,7 @@ public class ViewCreateAlbum extends HttpServlet {
 
         try {
             User user = (User) request.getSession().getAttribute("user");
-            images = imageDAO.showMyImages(user.getId());
+            images = imageDAO.getUserImages(user.getId()); // Show my images
         } catch (SQLException e) {
             e.printStackTrace();
         }

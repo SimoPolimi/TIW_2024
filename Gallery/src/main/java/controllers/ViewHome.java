@@ -50,14 +50,14 @@ public class ViewHome extends HttpServlet {
 		List<Album> otherAlbums = new ArrayList<Album>();
 		
 		try {
-			myAlbums = albumDAO.showUserAlbums(((User)request.getSession().getAttribute("user")).getId());
+			myAlbums = albumDAO.getUserAlbums(((User)request.getSession().getAttribute("user")).getId());
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		try {
-			otherAlbums = albumDAO.showOtherUserAlbums(((User)request.getSession().getAttribute("user")).getId());
+			otherAlbums = albumDAO.getOtherUserAlbums(((User)request.getSession().getAttribute("user")).getId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

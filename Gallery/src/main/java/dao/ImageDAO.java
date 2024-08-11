@@ -16,10 +16,10 @@ public class ImageDAO {
 		this.connection = connection;
 	}
 	
-	public Image getImageById(int id) throws SQLException{
+	public Image getImageById(int imageId) throws SQLException{
 		String query = "SELECT  * FROM image WHERE id = ?";
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
-			pstatement.setInt(1, id);
+			pstatement.setInt(1, imageId);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
@@ -27,7 +27,6 @@ public class ImageDAO {
 					result.next();
 					Image image = new Image();
 					UserDAO userDAO = new UserDAO(connection);
-					image.setId(result.getInt("id"));
 					image.setId(result.getInt("id"));
 					image.setUser(userDAO.getUserById(result.getInt("id_user")));
 					image.setTitle(result.getString("title"));
@@ -42,7 +41,7 @@ public class ImageDAO {
 		}
 	}
 
-	public List<Image> showAlbumImages(int albumId, int limit, int offset) throws SQLException {
+	public List<Image> getAlbumImages(int albumId, int limit, int offset) throws SQLException {
 		List<Image> images = new ArrayList<Image>();
 		String query = "SELECT image.* FROM image "
 				+ "INNER JOIN album_image on image.id=album_image.id_image "
@@ -91,35 +90,8 @@ public class ImageDAO {
 			throw new SQLException(e);
 		}
     }
-
-	public Image showImage(int imageId) throws SQLException {
-		Image image = new Image();
-		String query = "SELECT image.* FROM image "
-				+ "WHERE image.id=?;";
-
-		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
-			pstatement.setInt(1, imageId);
-			try (ResultSet result = pstatement.executeQuery();) {
-				if (!result.isBeforeFirst())
-					return null;
-				else {
-					result.next();
-					UserDAO userDAO = new UserDAO(connection);
-					image.setId(result.getInt("id"));
-					image.setUser(userDAO.getUserById(result.getInt("id_user")));
-					image.setTitle(result.getString("title"));
-					image.setCreation_date(result.getDate("creation_date"));
-					image.setDescription(result.getString("description"));
-					image.setPath(result.getString("path"));
-					return image;
-				}
-			}
-		} catch (SQLException e) {
-			throw new SQLException(e);
-		}	
-	}
 	
-	public List<Image> showMyImages(int userId) throws SQLException {
+	public List<Image> getUserImages(int userId) throws SQLException {
 		List<Image> images = new ArrayList<Image>();
 		String query = "SELECT * FROM image where id_user = ?;";
 

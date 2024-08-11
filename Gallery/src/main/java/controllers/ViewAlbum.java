@@ -62,7 +62,7 @@ public class ViewAlbum extends HttpServlet {
 			
 		try {
 			int offset = pageNumber * IMAGES_PER_PAGE;
-			images = imageDAO.showAlbumImages(albumId, IMAGES_PER_PAGE, offset);
+			images = imageDAO.getAlbumImages(albumId, IMAGES_PER_PAGE, offset);
 			int totalImages = imageDAO.countImagesByAlbumId(albumId);
             totalPages = (int) Math.ceil((double) totalImages / IMAGES_PER_PAGE);
             
