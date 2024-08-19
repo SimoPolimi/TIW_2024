@@ -53,14 +53,24 @@ public class CheckLogin extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
+		String path;
+		
+		ServletContext servletContext = getServletContext();
+		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		
 		if(email == null || password == null || email.isBlank() || password.isBlank()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Blank or null credentials.");
+			// Reload
+			webContext.setVariable("errorMsg", "Empty field.");
+			path = "/login.html";
+			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
 		
 		if (!isValidEmail(email)) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email");
+			// Reload
+			webContext.setVariable("errorMsg", "Invalid email.");
+			path = "/login.html";
+			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
 		
@@ -69,13 +79,11 @@ public class CheckLogin extends HttpServlet {
 		try {
 			user = userDao.checkCredentials(email, password);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to check user credentials.");
+			return;
 		}
 		
-		String path;
 		if(user == null) { // Wrong credentials
-			ServletContext servletContext = getServletContext();
-			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 			webContext.setVariable("emailReceived", (email != null || !email.isBlank() ? email : ""));
 			webContext.setVariable("errorMsg", "Invalid credentials, wrong email or password.");
 			path = "/login.html";

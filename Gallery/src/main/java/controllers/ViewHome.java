@@ -53,13 +53,15 @@ public class ViewHome extends HttpServlet {
 			myAlbums = albumDAO.getUserAlbums(((User)request.getSession().getAttribute("user")).getId());
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user albums.");
+			return;
 		}
 		
 		try {
 			otherAlbums = albumDAO.getOtherUserAlbums(((User)request.getSession().getAttribute("user")).getId());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find other albums.");
+			return;
 		}
 		
 	

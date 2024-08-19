@@ -47,7 +47,7 @@ public class WriteComment extends HttpServlet {
 		
 		// Check parameter is present
 		if (text == null || text.isEmpty()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "missing text");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing text");
 			return;
 		}
 		
@@ -60,7 +60,8 @@ public class WriteComment extends HttpServlet {
 		try {
 			commentDAO.writeComment(imageId, userId, sqlDate, text);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to write comment.");
+			return;
 		}
 		
 		int albumId = Integer.parseInt(request.getParameter("albumId"));

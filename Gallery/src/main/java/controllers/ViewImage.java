@@ -49,11 +49,19 @@ public class ViewImage extends HttpServlet {
 		// Image
 		ImageDAO imageDAO = new ImageDAO(connection);
 		Image image = new Image();
+		int imageId = 0;
 		
 		try {
-			image = imageDAO.getImageById(Integer.parseInt(request.getParameter("imageId")));
+			imageId = Integer.parseInt(request.getParameter("imageId"));
+		}catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to find image, invalid input.");
+			return;
+		}
+		try {
+			image = imageDAO.getImageById(imageId);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find image.");
+			return;
 		}
 		
 		// Comments
@@ -64,7 +72,8 @@ public class ViewImage extends HttpServlet {
 		try {
 			comments = commentDAO.getImageComments(Integer.parseInt(request.getParameter("imageId")));
 		} catch (SQLException e) {
-			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find image comments.");
+			return;
 		}	
 			
 		// Redirect

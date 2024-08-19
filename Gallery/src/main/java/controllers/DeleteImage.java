@@ -46,7 +46,8 @@ public class DeleteImage extends HttpServlet {
 		try {
 			imageDAO.deleteImage(imageId);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to delete image.");
+			return;
 		}
 		
 		String path = getServletContext().getContextPath() + "/ViewHome";

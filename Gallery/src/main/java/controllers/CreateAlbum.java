@@ -72,15 +72,17 @@ public class CreateAlbum extends HttpServlet {
             }
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to create album.");
+			return;
 		}
 		
 		if(albumId != 0) {
 			String path = getServletContext().getContextPath() + "/ViewAlbum?albumId=" + albumId + "&pageNumber=0";
 			response.sendRedirect(path);
+			return;
 		}else {
-			String path = getServletContext().getContextPath() + "/ViewHome";
-			response.sendRedirect(path);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to create album.");
+			return;
 		}
 		
 	}

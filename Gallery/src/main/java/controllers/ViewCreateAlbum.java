@@ -52,7 +52,8 @@ public class ViewCreateAlbum extends HttpServlet {
             User user = (User) request.getSession().getAttribute("user");
             images = imageDAO.getUserImages(user.getId()); // Show my images
         } catch (SQLException e) {
-            e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user images.");
+			return;
         }
 
         String path = "/WEB-INF/createAlbum.html";

@@ -56,7 +56,7 @@ public class UserDAO {
 		}
 	}
 	
-	public User registerUser(String username, String mail, String password) throws SQLException {
+	public void registerUser(String username, String mail, String password) throws SQLException {
 		String query = "INSERT INTO user (username, mail, password) VALUES (?, ?, ?)";
 		try (PreparedStatement pstatement = connection.prepareStatement(query)){
 			pstatement.setString(1, username);
@@ -66,14 +66,6 @@ public class UserDAO {
 		} catch (SQLException e) {
 			throw new SQLException(e);
 		}
-		// Set user to return
-		User user = null;
-		try {
-			user = checkCredentials(mail, password);
-		} catch (SQLException e) {
-			throw new SQLException(e);
-		}
-		return user;
 	}
 	
 	public boolean isNewUsername(String username) throws SQLException {

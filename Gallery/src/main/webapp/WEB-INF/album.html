@@ -19,7 +19,7 @@
 	<div class="table-container">
 	
 	<!-- pageNumber from 0 to totalPages-1 -->
-	<a th:if="${currentPage > 0}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage - 1})}">Prev</a>
+	<a th:if="${currentPage > 0 && currentPage <= totalPages-1}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage - 1})}">Prev</a>
 	    	
 	<table class="image-table">
 		<tr>
@@ -39,7 +39,7 @@
 		
 	</table>
 
-    <a th:if="${currentPage < totalPages-1}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage + 1})}">Next</a>
+    <a th:if="${currentPage < totalPages-1 && totalPages > 0}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage + 1})}">Next</a>
 
     </div>
 </body>

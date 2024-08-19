@@ -49,14 +49,28 @@ public class ViewAlbum extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ImageDAO imageDAO = new ImageDAO(connection);
 		List<Image> images = new ArrayList<Image>();
-		int albumId = Integer.parseInt(request.getParameter("albumId"));
+		
 		int totalPages = 0;
-		int pageNumber; /* Starts from 0 */
-		if(request.getParameter("pageNumber") == null) {
-			pageNumber = 0;
-		} else {
-			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+		int pageNumber = 0; /* Starts from 0 */
+		int albumId = 0;
+		
+		try {
+			albumId = Integer.parseInt(request.getParameter("albumId"));
+			
+			if(request.getParameter("pageNumber") == null) {
+				pageNumber = 0;
+			} else {
+				pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+				if(pageNumber < 0) {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to find album page, invalid input (page number cannot be negative).");
+					return;
+				}
+			}
+		}catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to find album page, invalid input.");
+			return;
 		}
+		
 			
 		
 			
@@ -73,11 +87,15 @@ public class ViewAlbum extends HttpServlet {
             		images.add(null);
             	}
             }
-            /*****************************************************/
-            
 		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find album.");
+			return;
+		}
+		// Inexistent page
+		if(pageNumber > totalPages - 1) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to find album page, this page does not exist.");
+			return;
+		}
 	
 		// Redirect
 		String path = "/WEB-INF/album.html";
