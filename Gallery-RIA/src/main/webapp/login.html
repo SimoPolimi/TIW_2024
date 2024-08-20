@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
+
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+<body class="login">
+	<div>
+		<form action="CheckLogin" method="post">
+			<div class="card">
+				<h2>Gallery2</h2>
+				<input class="round" type="email" name="email" placeholder="Email" required th:value="${emailReceived}">
+				<input class="round" type="password" name="password" placeholder="Password" required>
+				<p th:text="${errorMsg}"></p>
+				<button type="submit" value="login" class="btn btn-primary">Login</button>
+				<a href="registration.html">Register</a>
+			</div>
+		</form>
+	</div>
+</body>
+</html>
