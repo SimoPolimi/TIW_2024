@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<link rel="stylesheet" type="text/css" media="all"
+	href="css/mystyle.css" th:href="@{css/mystyle.css}" />
+
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+</head>
+<body>
+	<header>
+		Welcome back&nbsp;<span th:text="${session.user.username}">user</span>
+		<span><a href="Logout">Logout</a></span>
+	</header>	
+	<div class="center">
+		<a th:href="@{/ViewCreateAlbum}" class="btn-primary">Create album</a>
+	</div>
+	<div class="main-container">	
+		<div class="column">
+		<h1>My albums</h1>
+			<div th:each="a:${myAlbums}" class="album-container">
+				<span th:text="${a.title}">title</span>
+				<span th:text="'(by '+${a.owner.username}+')'">(by owner)</span> 
+				<a th:href="@{/ViewAlbum(albumId=${a.Id}, pageNumber=0)}">
+					<img src="icons/directory.png" class="directory">
+				</a>
+				<span th:text="${a.date}">date</span>
+			</div>
+		</div>
+		<div class="column">
+		<h1>Other albums</h1>
+			<div th:each="a:${otherAlbums}" class="album-container">
+				<span th:text="${a.title}">title</span>
+				<span th:text="'(by '+${a.owner.username}+')'">(by owner)</span> 
+				<a th:href="@{/ViewAlbum(albumId=${a.Id}, pageNumber=0)}">
+					<img src="icons/directory.png" class="directory">
+				</a>
+				<span th:text="${a.date}">date</span>
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>
