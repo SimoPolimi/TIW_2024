@@ -31,7 +31,7 @@
 			<i><span th:text="'('+${c.date}+')'">date</span></i>
 		</div>
 		<!-- Todo  -->
-		<a th:if="${session.user.username = clickedImage.user.username}" th:href="@{/DeleteImage(imageId=${clickedImage.id})}"><img src="icons/trash.png" class="trash"></a>
+		<a th:if="${session.user.username == clickedImage.user.username}" th:href="@{/DeleteImage(imageId=${clickedImage.id})}"><img src="icons/trash.png" class="trash"></a>
 			
 			
 		<!-- In js action deve essere vuota!!!!!!!!!!!!! se no mi reindirizza alla servlet -->

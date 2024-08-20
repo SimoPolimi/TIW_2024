@@ -92,8 +92,8 @@ public class ViewAlbum extends HttpServlet {
 			return;
 		}
 		// Inexistent page
-		if(pageNumber > totalPages - 1) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to find album page, this page does not exist.");
+		if((pageNumber > 0 && totalPages == 0) || (totalPages > 0 && pageNumber > totalPages - 1)) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to find album page, this album page does not exist.");
 			return;
 		}
 	
