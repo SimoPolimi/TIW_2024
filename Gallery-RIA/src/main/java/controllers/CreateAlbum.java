@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import dao.AlbumImageDAO;
 import utils.ConnectionHandler;
 
 @WebServlet("/CreateAlbum")
+@MultipartConfig
 public class CreateAlbum extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
