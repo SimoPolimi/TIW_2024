@@ -6,17 +6,11 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import beans.User;
 import dao.UserDAO;
@@ -27,7 +21,6 @@ public class CheckLogin extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	public CheckLogin() {
 		 super();
@@ -36,12 +29,7 @@ public class CheckLogin extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
+		// TODO: deleted something... needed????
 	}
 
 	@Override
@@ -53,24 +41,19 @@ public class CheckLogin extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
-		String path;
-		
-		ServletContext servletContext = getServletContext();
-		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+
+		// TODO - Debug print
+		System.out.println("req.getParameter(\"email\"): " + request.getParameter("email") + "\nreq.getParameter(\"password\"): " + request.getParameter("password"));
 		
 		if(email == null || password == null || email.isBlank() || password.isBlank()) {
-			// Reload
-			webContext.setVariable("errorMsg", "Empty field.");
-			path = "/login.html";
-			templateEngine.process(path, webContext, response.getWriter());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Empty field.");
 			return;
 		}
 		
 		if (!isValidEmail(email)) {
-			// Reload
-			webContext.setVariable("errorMsg", "Invalid email.");
-			path = "/login.html";
-			templateEngine.process(path, webContext, response.getWriter());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Invalid email.");
 			return;
 		}
 		
@@ -79,19 +62,22 @@ public class CheckLogin extends HttpServlet {
 		try {
 			user = userDao.checkCredentials(email, password);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to check user credentials.");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to check user credentials.");
 			return;
 		}
 		
 		if(user == null) { // Wrong credentials
-			webContext.setVariable("emailReceived", (email != null || !email.isBlank() ? email : ""));
-			webContext.setVariable("errorMsg", "Invalid credentials, wrong email or password.");
-			path = "/login.html";
-			templateEngine.process(path, webContext, response.getWriter());
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("Invalid credentials, wrong email or password.");
+			return;
 		} else { // Correct credentials, redirect to Home
 			request.getSession().setAttribute("user", user);
-			path = getServletContext().getContextPath() + "/ViewHome";
-			response.sendRedirect(path);
+			
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getWriter().write("{\"status\":\"success\"}");
 		}
 	}
 	
