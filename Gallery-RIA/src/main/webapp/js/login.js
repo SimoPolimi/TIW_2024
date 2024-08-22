@@ -18,12 +18,12 @@
             showLogin();
         });
 
-        function showRegistration() {
+        window.showRegistration = function() {
             loginDiv.style.display = "none";
             registrationDiv.style.display = "block";
         }
 
-        function showLogin() {
+        window.showLogin = function() {
             registrationDiv.style.display = "none";
             loginDiv.style.display = "block";
         }
@@ -84,13 +84,13 @@
 
                 makeCall(
                     "POST", 
-                    "CheckRegistration", 
+                    "Register", 
                     formData, 
                     registrationError, 
                     function(req) {
                         try {
                             const response = JSON.parse(req.responseText);
-                            if (response.success) {
+                            if (response.status == "success") {
                                 showLogin(); // Shows login after registration
                             } else {
                                 registrationError.textContent = response.message || "An error occurred.";
@@ -110,12 +110,17 @@
     });
 })();
 
+
+
 // Utility Functions
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 function isValidEmail(email) {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     return email && emailRegex.test(email);
 }
+
+
 
 function validateLoginForm() {
     const email = document.querySelector('input[name="email"]').value;

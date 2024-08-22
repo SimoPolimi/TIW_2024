@@ -6,18 +6,12 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import dao.UserDAO;
 import utils.ConnectionHandler;
@@ -28,7 +22,6 @@ public class Register extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	public Register() {
 		 super();
@@ -37,12 +30,6 @@ public class Register extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 	}
 
 	@Override
@@ -56,31 +43,22 @@ public class Register extends HttpServlet {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		String confirmPassword = request.getParameter("confirmPassword");
-		String path;
-		
-		ServletContext servletContext = getServletContext();
-		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		
+				
 		if(username == null || email == null || password == null || confirmPassword == null || username.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
-			// Reload
-			webContext.setVariable("errorMsg", "Empty field.");
-			path = "/registration.html";
-			templateEngine.process(path, webContext, response.getWriter());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Empty field.");
 			return;
 		}
 		
 		if(!password.equals(confirmPassword)){
-			webContext.setVariable("errorMsg", "Password do not match");
-			path = "/registration.html";
-			templateEngine.process(path, webContext, response.getWriter());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Passwords do not match.");
 			return;
 		}
 		
 		if (!isValidEmail(email)) {
-			// Reload
-			webContext.setVariable("errorMsg", "Invalid email.");
-			path = "/registration.html";
-			templateEngine.process(path, webContext, response.getWriter());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Invalid email.");
 			return;
 		}
 		
@@ -91,29 +69,33 @@ public class Register extends HttpServlet {
 			isNewUsername = userDao.isNewUsername(username);
 			isNewEmail = userDao.isNewEmail(email);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to check if user already exists.");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to check if user already exists.");
 			return;
 		}
 		
 		if(!isNewUsername || !isNewEmail || !password.equals(confirmPassword)) { // Wrong credentials
-			webContext.setVariable("emailReceived", ((email != null || !email.isBlank()) && isNewEmail ? email : ""));
 			if(!isNewUsername) {
-				webContext.setVariable("errorMsg", "Username already in use");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	            response.getWriter().println("Username already in use.");
+				return;
 			}else if(!isNewEmail) {
-				webContext.setVariable("errorMsg", "Email already in use");
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	            response.getWriter().println("Email already in use.");
+				return;
 			}
-			path = "/registration.html";
-			templateEngine.process(path, webContext, response.getWriter());	
 		}else { // Correct parameters
 			try {
 				userDao.registerUser(username, email, password);
 			} catch (SQLException e) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to register user.");
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	            response.getWriter().println("Database can't be reached, unable to register user.");
 				return;
 			}
-			webContext.setVariable("errorMsg", "Registration successful");
-			path = "/login.html";
-			templateEngine.process(path, webContext, response.getWriter());	
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getWriter().write("{\"status\":\"success\"}");	
 		}
 	}
 	
