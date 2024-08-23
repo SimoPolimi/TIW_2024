@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 import beans.User;
 import dao.UserDAO;
 import utils.ConnectionHandler;
@@ -73,13 +75,17 @@ public class CheckLogin extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println("Invalid credentials, wrong email or password.");
 			return;
-		} else { // Correct credentials, redirect to Home
+		} else { // Correct credentials
+			// Conversion to json needed because sessionStorage can only contain String
+			String jsonUser = new Gson().toJson(user);
+			
 			request.getSession().setAttribute("user", user);
 			
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.setStatus(HttpServletResponse.SC_OK);
-			response.getWriter().write("{\"status\":\"success\"}");
+			// Conversion to json needed because sessionStorage can only contain String
+			response.getWriter().write(jsonUser);
 		}
 	}
 	

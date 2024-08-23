@@ -5,9 +5,63 @@
     <title>Home</title>
     <link rel="stylesheet" type="text/css" href="css/mystyle.css">
     <script src="js/utils.js" charset="UTF-8" defer></script>
+    <script src="js/home.js" charset="UTF-8" defer></script>
 </head>
 
 <body>
-    ciao
+    <header>
+		Welcome back&nbsp;<span id="username">username</span>
+		<a id="backLink" href="#"><img src="icons/back.png" class="icon" style="display: none;"></a>
+		<a id="homeLink" href="#"><img src="icons/home.png" class="icon" style="display: none;"></a>
+		<a id="logoutLink" href="#">Logout</a>
+	</header>	
+
+    <!-- Album -->
+    <div id="albumSection">
+        <div class="center">
+            <a href="#" id="createAlbumBtn" class="btn-primary">Create album</a>
+        </div>
+        <div  class="main-container">
+        	<div id="myAlbums" class="column">
+            	<h1>My albums</h1>
+                	<!-- My albums -->
+        	</div>
+        	<div class="column">
+            	<h1>Other albums</h1>
+                	<!-- Other albums -->
+        	</div>
+        </div>
+    </div>
+
+    <!-- Album images -->
+    <div id="imageListSection" class="table-container" style="display: none;">
+        <a href="#" id="prevPageLink">Prev</a>
+        <table class="image-table">
+            <tr id="imageRow">
+                <!-- Album images -->
+            </tr>
+        </table>
+        <a href="#" id="nextPageLink">Next</a>
+    </div>
+
+    <!-- Image details -->
+    <div id="imageDetailSection" class="image-container" style="display: none;">
+        <span id="imageTitle" class="image-title">title</span>
+        <img id="imageDetail" src="#" class="big">
+        <div class="image-info">
+            <span id="imageDescription">description</span>
+            <span id="imageUser">user</span>
+            <i><span id="imageCreationDate">creation date</span></i>
+        </div>
+        <h2>Comments:</h2>
+        <div id="commentsSection">
+            <!-- Comments -->
+        </div>
+        <a href="#" id="deleteImageBtn"><img src="icons/trash.png" class="trash"></a>
+        <form id="commentForm" method="post" class="over">
+            <input id="commentText" class="round" type="text" name="text" placeholder="Insert comment here" required>
+            <button type="submit" value="send" class="btn btn-primary">Send</button>
+        </form>
+    </div>
 </body>
 </html>

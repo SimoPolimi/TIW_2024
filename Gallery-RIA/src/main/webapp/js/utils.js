@@ -25,3 +25,11 @@ function makeCall(method, url, formData, responseTag, callback) {
     request.open(method, url, true);  // true for asynchronous request
     request.send(formData);
 }
+
+ /**
+  * Retrieves all the information of the user from the session.
+  * Conversion to json needed because sessionStorage can only contain String
+  */
+ function getUser(){
+	 return JSON.parse(window.sessionStorage.getItem("user"));
+ }

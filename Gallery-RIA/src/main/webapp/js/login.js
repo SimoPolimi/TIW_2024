@@ -51,6 +51,7 @@
                     ErrorMessage, 
                     function(req) {
                         try {
+							// Set user in session (json because sessionStorage can only contain String)
                             const user = JSON.parse(req.responseText);
                             sessionStorage.setItem("user", JSON.stringify(user));
                             location.href = "home.html";
