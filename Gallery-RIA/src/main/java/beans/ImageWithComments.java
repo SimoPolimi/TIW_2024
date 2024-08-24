@@ -1,8 +1,9 @@
 package beans;
 
 import java.sql.Date;
+import java.util.List;
 
-public class Image {
+public class ImageWithComments {
 	
 	private int id;
 	private User user; // Username of the user who uploaded the image
@@ -10,6 +11,7 @@ public class Image {
 	private Date creation_date;
 	private String description;
 	private String path;
+	private List<Comment> comments;
 	
 	public int getId() {
 		return id;
@@ -57,6 +59,14 @@ public class Image {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 
 	

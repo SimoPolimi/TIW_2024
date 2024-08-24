@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import beans.Image;
+import beans.ImageWithComments;
 
 public class ImageDAO {
 	private Connection connection;
@@ -16,7 +16,7 @@ public class ImageDAO {
 		this.connection = connection;
 	}
 	
-	public Image getImageById(int imageId) throws SQLException{
+	public ImageWithComments getImageById(int imageId) throws SQLException{
 		String query = "SELECT  * FROM image WHERE id = ?";
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, imageId);
@@ -25,7 +25,7 @@ public class ImageDAO {
 					return null;
 				else {
 					result.next();
-					Image image = new Image();
+					ImageWithComments image = new ImageWithComments();
 					UserDAO userDAO = new UserDAO(connection);
 					image.setId(result.getInt("id"));
 					image.setUser(userDAO.getUserById(result.getInt("id_user")));
@@ -41,8 +41,8 @@ public class ImageDAO {
 		}
 	}
 
-	public List<Image> getAlbumImages(int albumId) throws SQLException {
-		List<Image> images = new ArrayList<Image>();
+	public List<ImageWithComments> getAlbumImages(int albumId) throws SQLException {
+		List<ImageWithComments> images = new ArrayList<ImageWithComments>();
 		String query = "SELECT image.* FROM image "
 				+ "INNER JOIN album_image on image.id=album_image.id_image "
 				+ "INNER JOIN album on album_image.id_album=album.id "
@@ -55,7 +55,7 @@ public class ImageDAO {
 					return null;
 				else {
 					while (result.next()) {
-						Image image = new Image();
+						ImageWithComments image = new ImageWithComments();
 						UserDAO userDAO = new UserDAO(connection);
 						image.setId(result.getInt("id"));
 						image.setUser(userDAO.getUserById(result.getInt("id_user")));
@@ -89,8 +89,8 @@ public class ImageDAO {
 		}
     }
 	
-	public List<Image> getUserImages(int userId) throws SQLException {
-		List<Image> images = new ArrayList<Image>();
+	public List<ImageWithComments> getUserImages(int userId) throws SQLException {
+		List<ImageWithComments> images = new ArrayList<ImageWithComments>();
 		String query = "SELECT * FROM image where id_user = ?;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
@@ -100,7 +100,7 @@ public class ImageDAO {
 					return null;
 				else {
 					while (result.next()) {
-						Image image = new Image();
+						ImageWithComments image = new ImageWithComments();
 						image.setId(result.getInt("id"));
 						image.setTitle(result.getString("title"));
 						image.setCreation_date(result.getDate("creation_date"));

@@ -15,63 +15,84 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import beans.Image;
+import beans.Comment;
+import beans.ImageWithComments;
+import dao.CommentDAO;
 import dao.ImageDAO;
 import utils.ConnectionHandler;
 
 @WebServlet("/ViewAlbum")
 @MultipartConfig
 public class ViewAlbum extends HttpServlet {
-	
-	private static final long serialVersionUID = 1L;
-	private Connection connection = null;
-	
+    
+    private static final long serialVersionUID = 1L;
+    private Connection connection = null;
 
-	public ViewAlbum() {
-		super();
-	}
+    public ViewAlbum() {
+        super();
+    }
 
-	public void init() throws ServletException {
-		connection = ConnectionHandler.getConnection(getServletContext());
-	}
+    public void init() throws ServletException {
+        connection = ConnectionHandler.getConnection(getServletContext());
+    }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ImageDAO imageDAO = new ImageDAO(connection);
-		List<Image> images = new ArrayList<Image>();
-		
-		int albumId = 0;
-		
-		try {
-			albumId = Integer.parseInt(request.getParameter("albumId"));
-		}catch (NumberFormatException e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ImageDAO imageDAO = new ImageDAO(connection);
+        List<ImageWithComments> images = new ArrayList<ImageWithComments>();
+        
+        int albumId = 0;
+        
+        try {
+            albumId = Integer.parseInt(request.getParameter("albumId"));
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Unable to find album page, invalid input.");
-			return;
-		}
-		
-			
-		try {
-			images = imageDAO.getAlbumImages(albumId);
-		} catch (SQLException e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        
+        try {
+            images = imageDAO.getAlbumImages(albumId);
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Database can't be reached, unable to find album.");
-			return;
-		}
-	
-		String jsonResponse = new Gson().toJson(images);
+            return;
+        }
+        
+        // Check if album has 0 images
+        if (images == null) {
+            // No images found, return an appropriate JSON response
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("{\"images\": [], \"hasImages\": false}");
+            return;
+        }
+        
+        // Recupera i commenti per ogni immagine
+        CommentDAO commentDAO = new CommentDAO(connection);
+        for (ImageWithComments image : images) {
+            try {
+                List<Comment> comments = commentDAO.getImageComments(image.getId());
+                image.setComments(comments);  // Aggiungi i commenti all'immagine
+            } catch (SQLException e) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error while retrieving comments.");
+                return;
+            }
+        }
 
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-		response.setStatus(HttpServletResponse.SC_OK);
+        // Convert the list of images with comments to JSON
+        String jsonResponse = new Gson().toJson(images);
 
-		response.getWriter().write(jsonResponse);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
 
-	}
+        response.getWriter().write(jsonResponse);
+    }
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        doGet(request, response);
+    }
 }

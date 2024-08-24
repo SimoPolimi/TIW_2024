@@ -5,7 +5,7 @@ import java.sql.Date;
 public class Comment {
 	
 	private int id;
-	private Image image;
+	private ImageWithComments image;
 	private User user;
 	private Date date;
 	private String text;
@@ -19,11 +19,11 @@ public class Comment {
 	}
 
 
-	public Image getImage() {
+	public ImageWithComments getImage() {
 		return image;
 	}
 
-	public void setImage(Image image) {
+	public void setImage(ImageWithComments image) {
 		this.image = image;
 	}
 

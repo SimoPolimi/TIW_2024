@@ -1,213 +1,261 @@
 window.addEventListener("load", () => {
-	// Check if user is logged
-	if (sessionStorage.getItem("user") === null) {
-		window.location.href = "login.html";
-	} else {
-		const usernameSpan = document.getElementById("username");
-		usernameSpan.textContent = getUser().username;
+    // Check if user is logged
+    if (sessionStorage.getItem("user") === null) {
+        window.location.href = "login.html";
+    } else {
+        const usernameSpan = document.getElementById("username");
+        usernameSpan.textContent = getUser().username;
 
-		// Page elements
-		const albumSection = document.getElementById("albumSection");
-		const imageListSection = document.getElementById("imageListSection");
-		const imageDetailSection = document.getElementById("imageDetailSection");
-		const homeLink = document.getElementById("homeLink");
-		const backLink = document.getElementById("backLink");
-		const prevPageLink = document.getElementById("prevPageLink");
-		const nextPageLink = document.getElementById("nextPageLink");
-		const logoutLink = document.getElementById("logoutLink");
-		const createAlbumBtn = document.getElementById("createAlbumBtn");
-		const deleteImageBtn = document.getElementById("deleteImageBtn");
-		const commentForm = document.getElementById("commentForm");
-		const commentText = document.getElementById("commentText");
+        // Page elements
+        const albumSection = document.getElementById("albumSection");
+        const imageListSection = document.getElementById("imageListSection");
+        const homeLink = document.getElementById("homeLink");
+        const prevPageLink = document.getElementById("prevPageLink");
+        const nextPageLink = document.getElementById("nextPageLink");
+        const logoutLink = document.getElementById("logoutLink");
+        const createAlbumBtn = document.getElementById("createAlbumBtn");
+        const deleteImageBtn = document.getElementById("deleteImageBtn");
+        const commentForm = document.getElementById("commentForm");
+        const commentText = document.getElementById("commentText");
 
-		// Global variables
-		let currentAlbumId = null;
-		let currentPage = 0;
-		let totalPages = 0;
-		let currentImageId = null;
-		const imagesPerPage = 5;
+        // Modal elements
+        const modal = document.getElementById("imageModal");
+        const modalImage = document.getElementById("modalImage");
+        const modalImageTitle = document.getElementById("modalImageTitle");
+        const modalImageDescription = document.getElementById("modalImageDescription");
+        const modalComments = document.getElementById("modalComments");
+        const modalCommentForm = document.getElementById("modalCommentForm");
+        const modalCommentText = document.getElementById("modalCommentText");
+        const spanClose = document.getElementsByClassName("close")[0];
 
-		// Load albums
-		function loadAlbums() {
-			makeCall('GET', 'ViewHome', null, null, (response) => {
-				const data = JSON.parse(response.responseText);
-				const myAlbumsDiv = document.getElementById('myAlbums');
-				const otherAlbumsDiv = document.getElementById('otherAlbums');
+        // Global variables
+        let currentAlbumId = null;
+        let currentPage = 0;
+        let totalPages = 0;
+        let currentImageId = null;
+        let images = []; // Contains all images and comments for the current album
+        const imagesPerPage = 5;
 
-				// Cleaning
-				myAlbumsDiv.innerHTML = '<h1>My albums</h1>';
-				otherAlbumsDiv.innerHTML = '<h1>Other albums</h1>';
+        // Load albums
+        function loadAlbums() {
+            makeCall('GET', 'ViewHome', null, null, (response) => {
+                const data = JSON.parse(response.responseText);
+                const myAlbumsDiv = document.getElementById('myAlbums');
+                const otherAlbumsDiv = document.getElementById('otherAlbums');
 
-				// Load my albums
-				data.myAlbums.forEach(album => {
-					const albumDiv = document.createElement('div');
-					albumDiv.setAttribute('class', 'album-container')
+                // Cleaning
+                myAlbumsDiv.innerHTML = '<h1>My albums</h1>';
+                otherAlbumsDiv.innerHTML = '<h1>Other albums</h1>';
 
-					const titleSpan = document.createElement('span');
-					titleSpan.textContent = album.title;
+                // Load my albums
+                data.myAlbums.forEach(album => {
+                    const albumDiv = document.createElement('div');
+                    albumDiv.setAttribute('class', 'album-container');
 
-					const directoryImg = document.createElement('img');
-					directoryImg.setAttribute('src', 'icons/directory.png');
-					directoryImg.setAttribute('class', 'directory');
-					directoryImg.addEventListener('click', () => showImageListSection(album.id, 0));
+                    const titleSpan = document.createElement('span');
+                    titleSpan.textContent = album.title;
 
-					const dateSpan = document.createElement('span');
-					dateSpan.textContent = album.date;
+                    const directoryImg = document.createElement('img');
+                    directoryImg.setAttribute('src', 'icons/directory.png');
+                    directoryImg.setAttribute('class', 'directory');
+                    directoryImg.addEventListener('click', () => showImageListSection(album.id, 0));
 
-					albumDiv.appendChild(titleSpan);
-					albumDiv.appendChild(directoryImg);
-					albumDiv.appendChild(dateSpan);
+                    const dateSpan = document.createElement('span');
+                    dateSpan.textContent = album.date;
 
-					myAlbumsDiv.appendChild(albumDiv);
-				});
+                    albumDiv.appendChild(titleSpan);
+                    albumDiv.appendChild(directoryImg);
+                    albumDiv.appendChild(dateSpan);
 
-				// load other albums
-				data.otherAlbums.forEach(album => {
-					const albumDiv = document.createElement('div');
-					albumDiv.setAttribute('class', 'album-container')
+                    myAlbumsDiv.appendChild(albumDiv);
+                });
 
-					const titleSpan = document.createElement('span');
-					titleSpan.textContent = album.title;
+                // Load other albums
+                data.otherAlbums.forEach(album => {
+                    const albumDiv = document.createElement('div');
+                    albumDiv.setAttribute('class', 'album-container');
 
-					const directoryImg = document.createElement('img');
-					directoryImg.setAttribute('src', 'icons/directory.png');
-					directoryImg.setAttribute('class', 'directory');
-					directoryImg.addEventListener('click', () => showImageListSection(album.id, 0));
+                    const titleSpan = document.createElement('span');
+                    titleSpan.textContent = album.title;
 
-					const dateSpan = document.createElement('span');
-					dateSpan.textContent = album.date;
+                    const directoryImg = document.createElement('img');
+                    directoryImg.setAttribute('src', 'icons/directory.png');
+                    directoryImg.setAttribute('class', 'directory');
+                    directoryImg.addEventListener('click', () => showImageListSection(album.id, 0));
 
-					albumDiv.appendChild(titleSpan);
-					albumDiv.appendChild(directoryImg);
-					albumDiv.appendChild(dateSpan);
+                    const dateSpan = document.createElement('span');
+                    dateSpan.textContent = album.date;
 
-					otherAlbumsDiv.appendChild(albumDiv);
-				});
-			});
-		}
+                    albumDiv.appendChild(titleSpan);
+                    albumDiv.appendChild(directoryImg);
+                    albumDiv.appendChild(dateSpan);
 
-		// Show albums
-		function showAlbumSection() {
-			albumSection.style.display = 'block';
-			imageListSection.style.display = 'none';
-			imageDetailSection.style.display = 'none';
-			loadAlbums();
-		}
-
-		// Show album images
-		function showImageListSection(albumId, pageNumber) {
-			currentAlbumId = albumId;
-			currentPage = pageNumber;
-			albumSection.style.display = 'none';
-			imageListSection.style.display = 'block';
-			imageDetailSection.style.display = 'none';
-			loadImagesForAlbum(albumId, pageNumber);
-		}
-
-		// Show image details
-		function showImageDetailSection(imageId) {
-			currentImageId = imageId;
-			albumSection.style.display = 'none';
-			imageListSection.style.display = 'none';
-			imageDetailSection.style.display = 'block';
-			loadImageDetails(imageId);
-		}
-
-		// Logout
-		logoutLink.addEventListener('click', () => {
-			makeCall('GET', 'Logout', null, null, () => {
-				sessionStorage.removeItem("user");
-				window.location.href = 'login.html';
-			});
-		});
-
-		// Load album images
-		// Carica le immagini di un album
-		function loadImagesForAlbum(albumId) {
-    makeCall('GET', `ViewAlbum?albumId=${albumId}`, null, null, (response) => {
-        const data = JSON.parse(response.responseText);
-        const imageRow = document.getElementById("imageRow");
-
-        // Pulisci la tabella delle immagini
-        imageRow.innerHTML = "";
-
-        // Calcola l'inizio e la fine della pagina corrente
-        const start = currentPage * imagesPerPage;
-        const end = Math.min(start + imagesPerPage, data.length);
-
-        // Aggiungi le immagini alla tabella
-        for (let i = start; i < end; i++) {
-            const image = data[i];
-            const cell = createImageCell(image);
-            imageRow.appendChild(cell);
+                    otherAlbumsDiv.appendChild(albumDiv);
+                });
+            });
         }
 
-        // Aggiungi celle vuote se necessario per riempire la pagina
-        const cellsToAdd = imagesPerPage - (end - start);
-        for (let i = 0; i < cellsToAdd; i++) {
-            const emptyCell = document.createElement('td');
-            emptyCell.className = "fixed-cell";
-            imageRow.appendChild(emptyCell);
+        // Show albums
+        function showAlbumSection() {
+            albumSection.style.display = 'block';
+            imageListSection.style.display = 'none';
+            homeLink.style.display = 'none'; // Hide homeLink on album section
+            modal.style.display = 'none'; // Hide modal
+            loadAlbums();
         }
 
-        // Aggiorna i controlli di paginazione
-        totalPages = Math.ceil(data.length / imagesPerPage);
-        updatePaginationControls();
-    });
-}
+        // Show album images
+        function showImageListSection(albumId, pageNumber) {
+            currentAlbumId = albumId;
+            currentPage = pageNumber;
+            albumSection.style.display = 'none';
+            imageListSection.style.display = 'block';
+            homeLink.style.display = 'inline'; // Show homeLink when viewing images
+            modal.style.display = 'none'; // Hide modal
+            loadImagesForAlbum(albumId);
+        }
 
+        // Load album images and their comments
+        function loadImagesForAlbum(albumId) {
+            makeCall('GET', `ViewAlbum?albumId=${albumId}`, null, null, (response) => {
+                images = JSON.parse(response.responseText); // Save the images data globally
+                const imageRow = document.getElementById("imageRow");
+                imageRow.innerHTML = "";
 
-		// Crea una cella per l'immagine
-		function createImageCell(image) {
-			const cell = document.createElement('td');
-			cell.className = "fixed-cell";
+                if (images.length === 0) {
+                    // Display a message if no images are available
+                    const noImagesMessage = document.createElement('tr');
+                    const noImagesCell = document.createElement('td');
+                    noImagesCell.colSpan = 5; // Adjust based on the number of columns in your table
+                    noImagesCell.textContent = 'No images available.';
+                    noImagesMessage.appendChild(noImagesCell);
+                    imageRow.appendChild(noImagesMessage);
 
-			const imageDiv = document.createElement('div');
-			const imageTitle = document.createElement('span');
-			imageTitle.textContent = image.title;
+                    // Hide pagination controls if there are no images
+                    prevPageLink.style.display = 'none';
+                    nextPageLink.style.display = 'none';
+                } else {
+                    // Determine which images to show based on pagination
+                    const start = currentPage * imagesPerPage;
+                    const end = Math.min(start + imagesPerPage, images.length);
 
-			const thumbnail = document.createElement('img');
-			thumbnail.setAttribute('src', `images/${image.path}`);
-			thumbnail.className = "in-album";
-			thumbnail.addEventListener('click', () => showImageDetailSection(image.id));
+                    // Add images to the view
+                    for (let i = start; i < end; i++) {
+                        const image = images[i];
+                        const cell = createImageCell(image);
+                        imageRow.appendChild(cell);
+                    }
 
-			imageDiv.appendChild(imageTitle);
-			imageDiv.appendChild(thumbnail);
-			cell.appendChild(imageDiv);
+                    // Add empty cells if there are less than imagesPerPage images
+                    const cellsToAdd = imagesPerPage - (end - start);
+                    for (let i = 0; i < cellsToAdd; i++) {
+                        const emptyCell = document.createElement('td');
+                        emptyCell.className = "fixed-cell";
+                        imageRow.appendChild(emptyCell);
+                    }
 
-			return cell;
-		}
+                    // Update pagination controls
+                    totalPages = Math.ceil(images.length / imagesPerPage);
+                    updatePaginationControls();
+                }
+            });
+        }
 
-		// Aggiorna i controlli di paginazione
+        // Create image cell
+        function createImageCell(image) {
+            const cell = document.createElement('td');
+            cell.className = "fixed-cell";
+
+            const imageDiv = document.createElement('div');
+            const imageTitle = document.createElement('span');
+            imageTitle.textContent = image.title;
+
+            const thumbnail = document.createElement('img');
+            thumbnail.setAttribute('src', `images/${image.path}`);
+            thumbnail.className = "in-album";
+            thumbnail.addEventListener('mouseover', () => showImageDetailInModal(image.id)); // Show modal on hover
+
+            imageDiv.appendChild(imageTitle);
+            imageDiv.appendChild(thumbnail);
+            cell.appendChild(imageDiv);
+
+            return cell;
+        }
+
+        // Show image details in modal
+        function showImageDetailInModal(imageId) {
+            currentImageId = imageId;
+            const image = images.find(img => img.id === imageId);
+
+            if (image) {
+                modalImage.setAttribute('src', `images/${image.path}`);
+                modalImageTitle.textContent = image.title;
+                modalImageDescription.textContent = image.description;
+
+                // Populate comments
+                modalComments.innerHTML = '';
+                if (image.comments && image.comments.length > 0) {
+                    image.comments.forEach(comment => {
+                        const commentDiv = document.createElement('div');
+                        commentDiv.innerHTML = `<b>${comment.user.username}:</b> ${comment.text} (${comment.date})`;
+                        modalComments.appendChild(commentDiv);
+                    });
+                } else {
+                    modalComments.innerHTML = '<p>No comments available.</p>';
+                }
+
+                // Show the modal
+                modal.style.display = 'block';
+            }
+        }
+
+        // Close the modal
+        spanClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Update pagination controls
         function updatePaginationControls() {
-            prevPageLink.style.display = currentPage > 0 ? "inline" : "none";
-            nextPageLink.style.display = currentPage < totalPages - 1 ? "inline" : "none";
-
-            prevPageLink.onclick = () => showImageListSection(currentAlbumId, currentPage - 1);
-            nextPageLink.onclick = () => showImageListSection(currentAlbumId, currentPage + 1);
+            if (images.length === 0) {
+                prevPageLink.style.display = 'none';
+                nextPageLink.style.display = 'none';
+            } else {
+                prevPageLink.style.display = currentPage > 0 ? "inline" : "none";
+                nextPageLink.style.display = currentPage < totalPages - 1 ? "inline" : "none";
+            }
         }
 
+        // Write comment
+        modalCommentForm.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-		// Write comment
-		commentForm.addEventListener('submit', function(event) {
-			event.preventDefault();
+            const text = modalCommentText.value.trim();
+            if (text) {
+                const formData = new FormData();
+                formData.append('imageId', currentImageId);
+                formData.append('text', text);
 
-			const text = commentText.value.trim();
-			if (text) {
-				const formData = new FormData();
-				formData.append('imageId', currentImageId);
-				formData.append('text', text);
+                makeCall('POST', 'WriteComment', formData, null, () => {
+                    loadImageDetails(currentImageId);
+                    modalCommentText.value = '';
+                });
+            } else {
+                alert('Comment cannot be empty');
+            }
+        });
 
-				makeCall('POST', 'WriteComment', formData, null, () => {
-					loadImageDetails(currentImageId);
-					commentText.value = '';
-				});
-			} else {
-				alert('Comment cannot be empty');
-			}
-		});
+        // Navigate to home (albums section)
+        homeLink.addEventListener('click', () => {
+            showAlbumSection();
+        });
 
-		// Initialize showing albums
-		showAlbumSection();
-	}
+        // Initialize showing albums
+        showAlbumSection();
+    }
 });
