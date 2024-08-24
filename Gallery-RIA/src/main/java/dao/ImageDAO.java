@@ -41,17 +41,15 @@ public class ImageDAO {
 		}
 	}
 
-	public List<Image> getAlbumImages(int albumId, int limit, int offset) throws SQLException {
+	public List<Image> getAlbumImages(int albumId) throws SQLException {
 		List<Image> images = new ArrayList<Image>();
 		String query = "SELECT image.* FROM image "
 				+ "INNER JOIN album_image on image.id=album_image.id_image "
 				+ "INNER JOIN album on album_image.id_album=album.id "
-				+ "WHERE album.id=? ORDER BY creation_date DESC LIMIT ? OFFSET ?;";
+				+ "WHERE album.id=? ORDER BY creation_date DESC;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, albumId);
-			pstatement.setInt(2, limit);
-			pstatement.setInt(3, offset);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
