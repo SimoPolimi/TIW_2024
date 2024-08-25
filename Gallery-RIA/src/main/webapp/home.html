@@ -10,8 +10,8 @@
 
 <body>
 	<header>
-		Welcome back&nbsp;<span id="username">username</span> <a id="backLink"
-			href="#"></a> <a id="homeLink" href="#"><img
+		Welcome back&nbsp;<span id="username">username</span>
+		<a id="homeLink" href="#"><img
 			src="icons/home.png" class="icon"></a> <a
 			id="logoutLink" href="#">Logout</a>
 	</header>
@@ -29,6 +29,19 @@
 				<!-- Other albums -->
 			</div>
 		</div>
+	</div>
+	
+	<!-- Create album -->
+	<div id="createAlbumSection" style="display: none;">
+	<form action="#" method="post">
+		<input class="round" type="text" name="title" placeholder="Write here the name of your album" required>
+		<div class="image-grid" id="userImages">
+			<!--  User images -->
+		</div>
+		<div class="center">
+			<button type="submit" value="create" class="btn btn-primary">Create album</button>
+		</div>
+	</form>
 	</div>
 
 	<!-- Album images -->
@@ -53,7 +66,7 @@
 				<p id="modalImageDescription"></p>
 				<div id="modalComments"></div>
 				<form id="modalCommentForm">
-					<textarea id="modalCommentText" placeholder="Add a comment..."></textarea>
+					<textarea id="modalCommentText" placeholder="Add a comment..." required></textarea>
 					<button type="submit">Post Comment</button>
 				</form>
 			</div>

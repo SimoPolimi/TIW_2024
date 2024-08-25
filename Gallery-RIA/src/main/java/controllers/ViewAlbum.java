@@ -75,7 +75,8 @@ public class ViewAlbum extends HttpServlet {
                 List<Comment> comments = commentDAO.getImageComments(image.getId());
                 image.setComments(comments);  // Aggiungi i commenti all'immagine
             } catch (SQLException e) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error while retrieving comments.");
+            	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().println("Database error while retrieving comments.");
                 return;
             }
         }

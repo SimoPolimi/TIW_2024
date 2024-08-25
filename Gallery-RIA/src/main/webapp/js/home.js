@@ -13,6 +13,7 @@ window.addEventListener("load", () => {
         const prevPageLink = document.getElementById("prevPageLink");
         const nextPageLink = document.getElementById("nextPageLink");
         const logoutLink = document.getElementById("logoutLink");
+        const createAlbumSection = document.getElementById("createAlbumSection");
         const createAlbumBtn = document.getElementById("createAlbumBtn");
         const deleteImageBtn = document.getElementById("deleteImageBtn");
         const commentForm = document.getElementById("commentForm");
@@ -99,7 +100,8 @@ window.addEventListener("load", () => {
         function showAlbumSection() {
             albumSection.style.display = 'block';
             imageListSection.style.display = 'none';
-            homeLink.style.display = 'none'; // Hide homeLink on album section
+            createAlbumSection.style.display = 'none';
+            homeLink.style.display = 'inline'; // Ensure homeLink is visible
             modal.style.display = 'none'; // Hide modal
             loadAlbums();
         }
@@ -110,6 +112,7 @@ window.addEventListener("load", () => {
             currentPage = pageNumber;
             albumSection.style.display = 'none';
             imageListSection.style.display = 'block';
+            createAlbumSection.style.display = 'none'; // Ensure createAlbumSection is hidden
             homeLink.style.display = 'inline'; // Show homeLink when viewing images
             modal.style.display = 'none'; // Hide modal
             loadImagesForAlbum(albumId);
@@ -253,6 +256,53 @@ window.addEventListener("load", () => {
         // Navigate to home (albums section)
         homeLink.addEventListener('click', () => {
             showAlbumSection();
+        });
+
+        // Show Create Album Section
+        createAlbumBtn.addEventListener('click', () => {
+            albumSection.style.display = 'none';
+            createAlbumSection.style.display = 'block';
+            homeLink.style.display = 'inline'; // Ensure homeLink is visible when creating album
+
+            // Load user images when user clicks to create album
+            makeCall('GET', 'ViewCreateAlbum', null, null, (response) => {
+                const images = JSON.parse(response.responseText);
+                populateUserImages(images);
+            });
+        });
+
+        // Populate the images in the Create Album section
+        function populateUserImages(images) {
+            const userImagesDiv = document.getElementById("userImages");
+            userImagesDiv.innerHTML = "";
+
+            images.forEach(image => {
+                const imageDiv = document.createElement('div');
+                imageDiv.className = "image-item";
+
+                const thumbnail = document.createElement('img');
+                thumbnail.setAttribute('src', `images/${image.path}`);
+                thumbnail.className = "thumbnail";
+
+                const checkbox = document.createElement('input');
+                checkbox.setAttribute('type', 'checkbox');
+                checkbox.setAttribute('name', 'selectedImages');
+                checkbox.setAttribute('value', image.id);
+
+                imageDiv.appendChild(thumbnail);
+                imageDiv.appendChild(checkbox);
+                userImagesDiv.appendChild(imageDiv);
+            });
+        }
+
+        // Submit Create Album Form
+        createAlbumSection.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            makeCall('POST', 'CreateAlbum', formData, null, () => {
+                alert("Album created successfully!");
+                showAlbumSection();
+            });
         });
 
         // Initialize showing albums

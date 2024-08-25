@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -14,12 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import com.google.gson.Gson;
 
-import beans.Image;
+import beans.ImageWithComments;
 import beans.User;
 import dao.ImageDAO;
 import utils.ConnectionHandler;
@@ -28,46 +24,42 @@ import utils.ConnectionHandler;
 @MultipartConfig
 public class ViewCreateAlbum extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-    private Connection connection = null;
-    private TemplateEngine templateEngine;
+	private static final long serialVersionUID = 1L;
+	private Connection connection = null;
 
-    public ViewCreateAlbum() {
-        super();
-    }
+	public ViewCreateAlbum() {
+		super();
+	}
 
-    public void init() throws ServletException {
-        connection = ConnectionHandler.getConnection(getServletContext());
-        ServletContext servletContext = getServletContext();
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setSuffix(".html");
-        this.templateEngine = new TemplateEngine();
-        this.templateEngine.setTemplateResolver(templateResolver);
-    }
+	public void init() throws ServletException {
+		connection = ConnectionHandler.getConnection(getServletContext());
+	}
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ImageDAO imageDAO = new ImageDAO(connection);
-        List<Image> images = new ArrayList<Image>();
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ImageDAO imageDAO = new ImageDAO(connection);
+		List<ImageWithComments> images = new ArrayList<ImageWithComments>();
 
-        try {
-            User user = (User) request.getSession().getAttribute("user");
-            images = imageDAO.getUserImages(user.getId()); // Show my images
-        } catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user images.");
+		try {
+			User user = (User) request.getSession().getAttribute("user");
+			images = imageDAO.getUserImages(user.getId()); // Show my images
+		} catch (SQLException e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to find user images.");
 			return;
-        }
+		}
 
-        String path = "/WEB-INF/createAlbum.html";
-        ServletContext servletContext = getServletContext();
-        response.setContentType("text/html;charset=UTF-8");
-        final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-        webContext.setVariable("images", images);
-        templateEngine.process(path, webContext, response.getWriter());
-    }
+		// Convert the list of images with comments to JSON
+		String jsonResponse = new Gson().toJson(images);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
-    }
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.setStatus(HttpServletResponse.SC_OK);
+
+		response.getWriter().write(jsonResponse);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
+	}
 }
