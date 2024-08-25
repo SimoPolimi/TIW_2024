@@ -5,17 +5,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import beans.User;
 import dao.CommentDAO;
@@ -27,7 +22,6 @@ public class WriteComment extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	public WriteComment() {
 		super();
@@ -35,12 +29,6 @@ public class WriteComment extends HttpServlet {
 
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -49,8 +37,9 @@ public class WriteComment extends HttpServlet {
 		
 		// Check parameter is present
 		if (text == null || text.isEmpty()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing text");
-			return;
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Missing text.");
+            return;
 		}
 		
 		LocalDate date = LocalDate.now();
@@ -62,14 +51,12 @@ public class WriteComment extends HttpServlet {
 		try {
 			commentDAO.writeComment(imageId, userId, sqlDate, text);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to write comment.");
-			return;
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to write comment.");
+            return;
 		}
 		
-		int albumId = Integer.parseInt(request.getParameter("albumId"));
-		int pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
-		String path = getServletContext().getContextPath() + "/ViewImage?imageId=" + imageId +"&albumId=" + albumId + "&pageNumber=" + pageNumber;
-		response.sendRedirect(path);
+		
 	}
 
 }
