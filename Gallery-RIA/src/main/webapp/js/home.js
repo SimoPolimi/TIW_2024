@@ -39,7 +39,7 @@ window.addEventListener("load", () => {
 
 		// Load albums
 		function loadAlbums() {
-			makeCall('GET', 'ViewHome', null, null, (response) => {
+			makeCall('GET', 'ViewHome', null, (response) => {
 				const data = JSON.parse(response.responseText);
 				const myAlbumsDiv = document.getElementById('myAlbums');
 				const otherAlbumsDiv = document.getElementById('otherAlbums');
@@ -126,7 +126,7 @@ window.addEventListener("load", () => {
 
 		// Load album images and their comments
 		function loadImagesForAlbum(albumId) {
-			makeCall('GET', `ViewAlbum?albumId=${albumId}`, null, null, (response) => {
+			makeCall('GET', `ViewAlbum?albumId=${albumId}`, null, (response) => {
 				images = JSON.parse(response.responseText); // Save the images data globally
 				const imageRow = document.getElementById("imageRow");
 				imageRow.innerHTML = "";
@@ -256,7 +256,7 @@ window.addEventListener("load", () => {
 				formData.append('imageId', currentImageId);
 				formData.append('text', text);
 
-				makeCall('POST', 'WriteComment', formData, null, () => {
+				makeCall('POST', 'WriteComment', formData, () => {
 					loadImageDetails(currentImageId);
 					modalCommentText.value = '';
 				});
@@ -277,7 +277,7 @@ window.addEventListener("load", () => {
 			homeLink.style.display = 'inline'; // Ensure homeLink is visible when creating album
 
 			// Load user images when user clicks to create album
-			makeCall('GET', 'ViewCreateAlbum', null, null, (response) => {
+			makeCall('GET', 'ViewCreateAlbum', null, (response) => {
 				const images = JSON.parse(response.responseText);
 				populateUserImages(images);
 			});
@@ -311,7 +311,7 @@ window.addEventListener("load", () => {
 		createAlbumSection.querySelector('form').addEventListener('submit', function(event) {
 			event.preventDefault();
 			const formData = new FormData(this);
-			makeCall('POST', 'CreateAlbum', formData, null, () => {
+			makeCall('POST', 'CreateAlbum', formData, () => {
 				alert("Album created successfully!");
 				showAlbumSection();
 			});

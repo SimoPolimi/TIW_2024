@@ -35,7 +35,6 @@
 (function() {
     document.addEventListener("DOMContentLoaded", function() {
         const loginForm = document.getElementById("loginForm");
-        const ErrorMessage = document.getElementById("loginError");
 
         loginForm.addEventListener("submit", function(event) {
             event.preventDefault();
@@ -48,7 +47,6 @@
                     "POST", 
                     "CheckLogin", 
                     formData, 
-                    ErrorMessage, 
                     function(req) {
                         try {
 							// Set user in session (json because sessionStorage can only contain String)
@@ -57,11 +55,9 @@
                             location.href = "home.html";
                         } catch (e) {
                             console.error("Failed to parse response:", e);
-                            ErrorMessage.textContent = "An error occurred while processing the response.";
+                            alert("An error occurred while processing the response.");
                         }
-                    }, 
-                    false, // false because FormData is not JSON
-                    true  // true because login request
+                    }
                 );
             } else {
                 loginForm.reportValidity();
@@ -75,7 +71,6 @@
 (function() {
     document.addEventListener("DOMContentLoaded", function() {
         const registrationForm = document.getElementById("registrationForm");
-        const registrationError = document.getElementById("registrationError");
 
         registrationForm.addEventListener("submit", function(event) {
             event.preventDefault();
@@ -87,22 +82,20 @@
                     "POST", 
                     "Register", 
                     formData, 
-                    registrationError, 
                     function(req) {
                         try {
                             const response = JSON.parse(req.responseText);
                             if (response.status == "success") {
                                 showLogin(); // Shows login after registration
+                                alert("Registration successfull");
                             } else {
-                                registrationError.textContent = response.message || "An error occurred.";
+                                alert(response.message || "An error occurred.");
                             }
                         } catch (e) {
                             console.error("Failed to parse response:", e);
-                            registrationError.textContent = "An error occurred while processing the response.";
+                            alert("An error occurred while processing the response.");
                         }
-                    }, 
-                    false, 
-                    false
+                    }
                 );
             } else {
                 registrationForm.reportValidity();

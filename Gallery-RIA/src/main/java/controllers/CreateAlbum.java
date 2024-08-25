@@ -7,17 +7,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import beans.User;
 import dao.AlbumDAO;
@@ -30,7 +25,6 @@ public class CreateAlbum extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	public CreateAlbum() {
 		super();
@@ -38,12 +32,6 @@ public class CreateAlbum extends HttpServlet {
 
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -53,8 +41,9 @@ public class CreateAlbum extends HttpServlet {
 		
 		// Check parameter is present
 		if (title == null || title.isEmpty()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "missing title");
-			return;
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Missing title.");
+            return;
 		}
 		
 		LocalDate date = LocalDate.now();
@@ -74,17 +63,9 @@ public class CreateAlbum extends HttpServlet {
             }
 			
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to create album.");
-			return;
-		}
-		
-		if(albumId != 0) {
-			String path = getServletContext().getContextPath() + "/ViewAlbum?albumId=" + albumId + "&pageNumber=0";
-			response.sendRedirect(path);
-			return;
-		}else {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to create album.");
-			return;
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to create album.");
+            return;
 		}
 		
 	}
