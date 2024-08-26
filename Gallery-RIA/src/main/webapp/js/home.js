@@ -16,8 +16,6 @@ window.addEventListener("load", () => {
 		const createAlbumSection = document.getElementById("createAlbumSection");
 		const createAlbumBtn = document.getElementById("createAlbumBtn");
 		const deleteImageBtn = document.getElementById("deleteImageBtn");
-		const commentForm = document.getElementById("commentForm");
-		const commentText = document.getElementById("commentText");
 
 		// Modal elements
 		const modal = document.getElementById("imageModal");
@@ -226,7 +224,7 @@ window.addEventListener("load", () => {
 
 		// Close the modal
 		spanClose.addEventListener('click', () => {
-			modal.style.display = 'none';		
+			modal.style.display = 'none';
 		});
 
 		window.addEventListener('click', (event) => {
@@ -257,8 +255,13 @@ window.addEventListener("load", () => {
 				formData.append('text', text);
 
 				makeCall('POST', 'WriteComment', formData, () => {
-					loadImageDetails(currentImageId);
+					// Aggiungi il nuovo commento al DOM
+					const newCommentDiv = document.createElement('div');
+					newCommentDiv.innerHTML = `<b>${getUser().username}:</b> ${text} (just now)`;
+					modalComments.appendChild(newCommentDiv);
 					modalCommentText.value = '';
+					// Update for next interactions
+					loadImagesForAlbum(currentAlbumId);
 				});
 			} else {
 				alert('Comment cannot be empty');
@@ -320,4 +323,15 @@ window.addEventListener("load", () => {
 		// Initialize showing albums
 		showAlbumSection();
 	}
+
+	// Logout event listener
+	logoutLink.addEventListener('click', () => {
+		makeCall('POST', 'Logout', null, () => {
+			// Clear session storage to log out the user on the client-side
+			sessionStorage.clear();
+			// Redirect to login page
+			window.location.href = "login.html";
+		});
+	});
+
 });

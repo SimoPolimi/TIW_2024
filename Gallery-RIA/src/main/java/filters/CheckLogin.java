@@ -25,7 +25,9 @@ public class CheckLogin implements Filter {
 		String loginPath = req.getServletContext().getContextPath() + "/login.html";
 		HttpSession session = req.getSession();
 		if(session.isNew() || session.getAttribute("user") == null) {
-			res.sendRedirect(loginPath);
+			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            res.setHeader("Location", loginPath);
+            System.out.print("Login check FAILED...\n");
 			return;
 		}
 		filterChain.doFilter(request, response);
