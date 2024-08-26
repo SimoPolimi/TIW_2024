@@ -43,7 +43,7 @@ public class WriteComment extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		CommentDAO commentDAO = new CommentDAO(connection);
-		String text = request.getParameter("text");
+		String text = request.getParameter("text").trim();
 		
 		// Check parameter is present
 		if (text == null || text.isEmpty()) {

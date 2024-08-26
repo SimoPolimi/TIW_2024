@@ -50,10 +50,10 @@ public class Register extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String username = request.getParameter("username");
-		String email = request.getParameter("email");
-		String password = request.getParameter("password");
-		String confirmPassword = request.getParameter("confirmPassword");
+		String username = request.getParameter("username").trim();
+		String email = request.getParameter("email").trim();
+		String password = request.getParameter("password").trim();
+		String confirmPassword = request.getParameter("confirmPassword").trim();
 		String path;
 		
 		ServletContext servletContext = getServletContext();

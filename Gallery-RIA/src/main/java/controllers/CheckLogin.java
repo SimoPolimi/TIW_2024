@@ -43,8 +43,8 @@ public class CheckLogin extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String email = request.getParameter("email");
-		String password = request.getParameter("password");
+		String email = request.getParameter("email").trim();
+		String password = request.getParameter("password").trim();
 
 		// TODO - Debug print
 		System.out.println("req.getParameter(\"email\"): " + request.getParameter("email") + "\nreq.getParameter(\"password\"): " + request.getParameter("password"));

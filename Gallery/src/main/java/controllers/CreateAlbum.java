@@ -47,7 +47,7 @@ public class CreateAlbum extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		AlbumDAO albumDAO = new AlbumDAO(connection);
 		AlbumImageDAO albumImageDAO = new AlbumImageDAO(connection);
-		String title = request.getParameter("title");
+		String title = request.getParameter("title").trim();
 		
 		// Check parameter is present
 		if (title == null || title.isEmpty()) {
