@@ -246,17 +246,17 @@ window.addEventListener("load", () => {
 			e.preventDefault();
 
 			if (dragSrcEl !== this) {
-                const dragSrcId = event.dataTransfer.getData('text/plain');
-                const dropTargetId = this.getAttribute('data-id');
+				const dragSrcId = event.dataTransfer.getData('text/plain');
+				const dropTargetId = this.getAttribute('data-id');
 
-                // Swap HTML content
-                const dragSrcHTML = dragSrcEl.innerHTML;
-                dragSrcEl.innerHTML = this.innerHTML;
-                this.innerHTML = dragSrcHTML;
+				// Swap HTML content
+				const dragSrcHTML = dragSrcEl.innerHTML;
+				dragSrcEl.innerHTML = this.innerHTML;
+				this.innerHTML = dragSrcHTML;
 
-                // Swap IDs
-                dragSrcEl.setAttribute('data-id', dropTargetId);
-                this.setAttribute('data-id', dragSrcId);
+				// Swap IDs
+				dragSrcEl.setAttribute('data-id', dropTargetId);
+				this.setAttribute('data-id', dragSrcId);
 
 				// Enamble save button
 				saveOrderBtn.disabled = false;
@@ -272,23 +272,30 @@ window.addEventListener("load", () => {
 			});
 		}
 
+		function getCurrentOrder() {
+			const listItems = document.querySelectorAll('#titleList li');
+			return Array.from(listItems).map((item, index) => ({
+				imageId: parseInt(item.getAttribute('data-id'), 10),  // Assicurati che sia un numero
+				position: index
+			}));
+		}
+
 		saveOrderBtn.addEventListener('click', () => {
-			const orderedIds = [];
-			const items = document.querySelectorAll('.sortingEle');
-			items.forEach(item => {
-				orderedIds.push(item.getAttribute('data-id'));
+			const order = getCurrentOrder();
+			if (order.length === 0) {
+				alert('No items to save.');
+				return;
+			}
+			const data = JSON.stringify({
+				albumId: currentAlbumId,  // Assicurati che currentAlbumId sia un numero
+				order: order
 			});
 
-			console.log('New image order:', orderedIds);
-
-			// Invia i dati al server tramite una richiesta AJAX
-			// makeCall('POST', 'SaveOrder', JSON.stringify(orderedIds), (response) => {
-			//     alert('Ordinamento salvato con successo!');
-			// });
-
-			saveOrderBtn.disabled = true;
-		}
-		);
+			makeJsonCall('POST', 'SaveOrder', data, () => {
+				alert("Custom order saved");
+				showImageListSection(currentAlbumId, 0);		
+			});
+		});
 
 		function initializeDragAndDrop() {
 			const items = document.querySelectorAll('.sortingEle');

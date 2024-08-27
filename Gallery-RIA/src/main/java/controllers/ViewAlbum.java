@@ -17,8 +17,10 @@ import com.google.gson.Gson;
 
 import beans.Comment;
 import beans.ImageWithComments;
+import beans.User;
 import dao.CommentDAO;
 import dao.ImageDAO;
+import dao.UserImageOrderDAO;
 import utils.ConnectionHandler;
 
 @WebServlet("/ViewAlbum")
@@ -50,8 +52,25 @@ public class ViewAlbum extends HttpServlet {
             return;
         }
         
+        int userId = ((User) request.getSession().getAttribute("user")).getId();
+        
+        UserImageOrderDAO userImageOrderDAO = new UserImageOrderDAO(connection);
+		boolean isExistingOrder;
+
         try {
-            images = imageDAO.getAlbumImages(albumId);
+        	isExistingOrder = userImageOrderDAO.isExistingOrder(userId, albumId);
+        } catch (SQLException e) {
+        	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to find custom order.");
+            return;
+        }
+        
+        try {
+        	if(!isExistingOrder) {
+        		images = imageDAO.getAlbumImages(albumId);
+        	}else {
+        		images = imageDAO.getAlbumImagesOrdered(albumId, userId);
+        	}
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Database can't be reached, unable to find album.");
