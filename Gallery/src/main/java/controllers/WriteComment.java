@@ -44,6 +44,7 @@ public class WriteComment extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		CommentDAO commentDAO = new CommentDAO(connection);
 		String text = request.getParameter("text").trim();
+		int imageId = 0;
 		
 		// Check parameter is present
 		if (text == null || text.isEmpty()) {
@@ -53,8 +54,13 @@ public class WriteComment extends HttpServlet {
 		
 		LocalDate date = LocalDate.now();
 		java.sql.Date sqlDate = java.sql.Date.valueOf(date);
-		int imageId = Integer.parseInt(request.getParameter("imageId"));
-		int userId = ((User)request.getSession().getAttribute("user")).getId();
+		try {
+			imageId = Integer.parseInt(request.getParameter("imageId"));
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("Unable to find image, invalid input.");
+            return;
+        }		int userId = ((User)request.getSession().getAttribute("user")).getId();
 		
 		// TODO: do better
 		try {
