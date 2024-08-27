@@ -16,6 +16,9 @@ window.addEventListener("load", () => {
 		const createAlbumSection = document.getElementById("createAlbumSection");
 		const createAlbumTitle = document.getElementById("createAlbumTitle");
 		const createAlbumBtn = document.getElementById("createAlbumBtn");
+		const sortImageListSection = document.getElementById("sortImageListSection");
+		const sortButton = document.getElementById("sortButton");
+		const saveOrderBtn = document.getElementById("saveOrderBtn");
 		const deleteImageBtn = document.getElementById("deleteImageBtn");
 
 		// Modal elements
@@ -33,8 +36,9 @@ window.addEventListener("load", () => {
 		let currentPage = 0;
 		let totalPages = 0;
 		let currentImageId = null;
-		let images = []; // Contains all images and comments for the current album
+		let images = [];
 		const imagesPerPage = 5;
+		let dragSrcEl = null; // Used for drag&drop
 
 		// Load albums
 		function loadAlbums() {
@@ -43,7 +47,6 @@ window.addEventListener("load", () => {
 				const myAlbumsDiv = document.getElementById('myAlbums');
 				const otherAlbumsDiv = document.getElementById('otherAlbums');
 
-				// Cleaning
 				myAlbumsDiv.innerHTML = '<h1>My albums</h1>';
 				otherAlbumsDiv.innerHTML = '<h1>Other albums</h1>';
 
@@ -55,6 +58,8 @@ window.addEventListener("load", () => {
 
 						const titleSpan = document.createElement('span');
 						titleSpan.textContent = album.title;
+						const ownerSpan = document.createElement('span');
+						ownerSpan.textContent = "(by " + album.owner.username + ")";
 
 						const directoryImg = document.createElement('img');
 						directoryImg.setAttribute('src', 'icons/directory.png');
@@ -65,6 +70,7 @@ window.addEventListener("load", () => {
 						dateSpan.textContent = album.date;
 
 						albumDiv.appendChild(titleSpan);
+						albumDiv.appendChild(ownerSpan);
 						albumDiv.appendChild(directoryImg);
 						albumDiv.appendChild(dateSpan);
 
@@ -85,6 +91,8 @@ window.addEventListener("load", () => {
 
 						const titleSpan = document.createElement('span');
 						titleSpan.textContent = album.title;
+						const ownerSpan = document.createElement('span');
+						ownerSpan.textContent = "(by " + album.owner.username + ")";
 
 						const directoryImg = document.createElement('img');
 						directoryImg.setAttribute('src', 'icons/directory.png');
@@ -95,6 +103,7 @@ window.addEventListener("load", () => {
 						dateSpan.textContent = album.date;
 
 						albumDiv.appendChild(titleSpan);
+						albumDiv.appendChild(ownerSpan);
 						albumDiv.appendChild(directoryImg);
 						albumDiv.appendChild(dateSpan);
 
@@ -114,6 +123,7 @@ window.addEventListener("load", () => {
 			albumSection.style.display = 'block';
 			imageListSection.style.display = 'none';
 			createAlbumSection.style.display = 'none';
+			sortImageListSection.style.display = 'none';
 			homeLink.style.display = 'none'; // Hide homeLink on the main albums page
 			modal.style.display = 'none'; // Hide modal
 			loadAlbums();
@@ -126,6 +136,7 @@ window.addEventListener("load", () => {
 			albumSection.style.display = 'none';
 			imageListSection.style.display = 'block';
 			createAlbumSection.style.display = 'none'; // Ensure createAlbumSection is hidden
+			sortImageListSection.style.display = 'none';
 			homeLink.style.display = 'inline'; // Show homeLink when viewing images
 			modal.style.display = 'none'; // Hide modal
 
@@ -137,6 +148,21 @@ window.addEventListener("load", () => {
 			loadImagesForAlbum(albumId);
 		}
 
+		sortButton.addEventListener('click', () => {
+			showSortImageListSection();
+		});
+
+		// Show album images
+		function showSortImageListSection() {
+			albumSection.style.display = 'none';
+			imageListSection.style.display = 'none';
+			createAlbumSection.style.display = 'none'; // Ensure createAlbumSection is hidden
+			sortImageListSection.style.display = 'block';
+			homeLink.style.display = 'inline'; // Show homeLink when viewing images
+			modal.style.display = 'none'; // Hide modal
+		}
+
+
 		// Load album images and their comments
 		function loadImagesForAlbum(albumId) {
 			makeCall('GET', `ViewAlbum?albumId=${albumId}`, null, (response) => {
@@ -145,7 +171,7 @@ window.addEventListener("load", () => {
 				imageRow.innerHTML = "";
 
 				if (images.length === 0) {
-					// Display a message if no images are available
+					// No images
 					const noImagesMessage = document.createElement('tr');
 					const noImagesCell = document.createElement('td');
 					noImagesCell.colSpan = 5; // Adjust based on the number of columns in your table
@@ -153,7 +179,6 @@ window.addEventListener("load", () => {
 					noImagesMessage.appendChild(noImagesCell);
 					imageRow.appendChild(noImagesMessage);
 
-					// Hide pagination controls if there are no images
 					prevPageLink.style.display = 'none';
 					nextPageLink.style.display = 'none';
 				} else {
@@ -179,7 +204,99 @@ window.addEventListener("load", () => {
 					// Update pagination controls
 					totalPages = Math.ceil(images.length / imagesPerPage);
 					updatePaginationControls();
+
+					// Sorting functions
+					generateSortingList(images);
+					initializeDragAndDrop();
 				}
+			});
+		}
+
+		// Generate title list
+		function generateSortingList(images) {
+			const titleList = document.getElementById('titleList');
+			titleList.innerHTML = "";
+
+			images.forEach(image => {
+				const li = document.createElement('li');
+				li.className = 'sortingEle';
+				li.draggable = true;
+				li.setAttribute('data-id', image.id);
+				li.textContent = image.title;
+				titleList.appendChild(li);
+			});
+		}
+
+		function handleDragStart(e) {
+			dragSrcEl = this;
+			e.dataTransfer.effectAllowed = 'move';
+			e.dataTransfer.setData('text/html', this.innerHTML);
+			e.dataTransfer.setData('text/plain', this.getAttribute('data-id'));
+			this.classList.add('dragging');
+		}
+
+		function handleDragOver(e) {
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
+			return false;
+		}
+
+		function handleDrop(e) {
+			e.stopPropagation();
+			e.preventDefault();
+
+			if (dragSrcEl !== this) {
+                const dragSrcId = event.dataTransfer.getData('text/plain');
+                const dropTargetId = this.getAttribute('data-id');
+
+                // Swap HTML content
+                const dragSrcHTML = dragSrcEl.innerHTML;
+                dragSrcEl.innerHTML = this.innerHTML;
+                this.innerHTML = dragSrcHTML;
+
+                // Swap IDs
+                dragSrcEl.setAttribute('data-id', dropTargetId);
+                this.setAttribute('data-id', dragSrcId);
+
+				// Enamble save button
+				saveOrderBtn.disabled = false;
+			}
+			return false;
+		}
+
+		function handleDragEnd() {
+			const items = document.querySelectorAll('.sortingEle');
+			items.forEach(item => {
+				item.classList.remove('over');
+				item.classList.remove('dragging');
+			});
+		}
+
+		saveOrderBtn.addEventListener('click', () => {
+			const orderedIds = [];
+			const items = document.querySelectorAll('.sortingEle');
+			items.forEach(item => {
+				orderedIds.push(item.getAttribute('data-id'));
+			});
+
+			console.log('New image order:', orderedIds);
+
+			// Invia i dati al server tramite una richiesta AJAX
+			// makeCall('POST', 'SaveOrder', JSON.stringify(orderedIds), (response) => {
+			//     alert('Ordinamento salvato con successo!');
+			// });
+
+			saveOrderBtn.disabled = true;
+		}
+		);
+
+		function initializeDragAndDrop() {
+			const items = document.querySelectorAll('.sortingEle');
+			items.forEach(item => {
+				item.addEventListener('dragstart', handleDragStart);
+				item.addEventListener('dragover', handleDragOver);
+				item.addEventListener('drop', handleDrop);
+				item.addEventListener('dragend', handleDragEnd);
 			});
 		}
 
@@ -328,6 +445,7 @@ window.addEventListener("load", () => {
 		createAlbumBtn.addEventListener('click', () => {
 			albumSection.style.display = 'none';
 			createAlbumSection.style.display = 'block';
+			sortImageListSection.style.display = 'none';
 			homeLink.style.display = 'inline'; // Ensure homeLink is visible when creating an album
 
 			// Load user images when the user clicks to create an album

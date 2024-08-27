@@ -264,3 +264,14 @@ div.image-container {
     padding-top: 10px;
 }
 
+/* Drag & drop */
+.dragging {
+    opacity: 0.5;
+}
+
+.sortingEle {
+    cursor: move; 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    margin: 5px; 
+}
