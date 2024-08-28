@@ -2,7 +2,9 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumImageDAO {
@@ -39,5 +41,24 @@ public class AlbumImageDAO {
         }
         //System.out.print(rowsUpdated);
         return rowsUpdated;
+    }
+	
+	// For order controls (check if all the images are in the album and each is ordered)
+	public List<Integer> getImageIdsByAlbum(int albumId) throws SQLException {
+        String query = "SELECT id_image FROM album_image WHERE id_album = ?";
+        List<Integer> imageIds = new ArrayList<>();
+
+        try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+            pstatement.setInt(1, albumId);
+            try (ResultSet result = pstatement.executeQuery()) {
+                while (result.next()) {
+                    imageIds.add(result.getInt("id_image"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+
+        return imageIds;
     }
 }
