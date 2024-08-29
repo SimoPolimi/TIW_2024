@@ -16,6 +16,10 @@ window.addEventListener("load", () => {
 		const createAlbumSection = document.getElementById("createAlbumSection");
 		const createAlbumTitle = document.getElementById("createAlbumTitle");
 		const createAlbumBtn = document.getElementById("createAlbumBtn");
+		const uploadImageBtn = document.getElementById("uploadImageBtn");
+		const uploadImageSection = document.getElementById("uploadImageSection");
+		const uploadImageTitle = document.getElementById("uploadImageTitle");
+		const uploadImageDescription = document.getElementById("uploadImageDescription");
 		const sortImageListSection = document.getElementById("sortImageListSection");
 		const sortButton = document.getElementById("sortButton");
 		const saveOrderBtn = document.getElementById("saveOrderBtn");
@@ -123,10 +127,27 @@ window.addEventListener("load", () => {
 			albumSection.style.display = 'block';
 			imageListSection.style.display = 'none';
 			createAlbumSection.style.display = 'none';
+			uploadImageSection.style.display = 'none';
 			sortImageListSection.style.display = 'none';
-			homeLink.style.display = 'none'; // Hide homeLink on the main albums page
-			modal.style.display = 'none'; // Hide modal
+			homeLink.style.display = 'none';
+			modal.style.display = 'none';
 			loadAlbums();
+		}
+		
+		function showCreateAlbumSection(){
+			albumSection.style.display = 'none';
+			imageListSection.style.display = 'none';
+			createAlbumSection.style.display = 'block';
+			uploadImageSection.style.display = 'none';
+			sortImageListSection.style.display = 'none';
+			homeLink.style.display = 'inline';
+			modal.style.display = 'none';
+			
+			// Load user images when the user clicks to create an album
+			makeCall('GET', 'ViewCreateAlbum', null, (response) => {
+				const images = JSON.parse(response.responseText);
+				populateUserImages(images);
+			});
 		}
 
 		// Show album images
@@ -135,10 +156,11 @@ window.addEventListener("load", () => {
 			currentPage = pageNumber;
 			albumSection.style.display = 'none';
 			imageListSection.style.display = 'block';
-			createAlbumSection.style.display = 'none'; // Ensure createAlbumSection is hidden
+			createAlbumSection.style.display = 'none';
+			uploadImageSection.style.display = 'none';
 			sortImageListSection.style.display = 'none';
-			homeLink.style.display = 'inline'; // Show homeLink when viewing images
-			modal.style.display = 'none'; // Hide modal
+			homeLink.style.display = 'inline';
+			modal.style.display = 'none';
 
 			// Remove all previous image event listeners
 			const currentImageElements = document.querySelectorAll('.in-album');
@@ -152,14 +174,30 @@ window.addEventListener("load", () => {
 			showSortImageListSection();
 		});
 
+		// Show albums
+		function showUploadImageSection() {
+			albumSection.style.display = 'none';
+			imageListSection.style.display = 'none';
+			createAlbumSection.style.display = 'none';
+			uploadImageSection.style.display = 'block';
+			sortImageListSection.style.display = 'none';
+			homeLink.style.display = 'inline';
+			modal.style.display = 'none';
+		}
+
+		uploadImageBtn.addEventListener('click', () => {
+			showUploadImageSection();
+		});
+
 		// Show album images
 		function showSortImageListSection() {
 			albumSection.style.display = 'none';
 			imageListSection.style.display = 'none';
-			createAlbumSection.style.display = 'none'; // Ensure createAlbumSection is hidden
+			createAlbumSection.style.display = 'none';
+			uploadImageSection.style.display = 'none';
 			sortImageListSection.style.display = 'block';
-			homeLink.style.display = 'inline'; // Show homeLink when viewing images
-			modal.style.display = 'none'; // Hide modal
+			homeLink.style.display = 'inline';
+			modal.style.display = 'none';
 		}
 
 
@@ -293,7 +331,7 @@ window.addEventListener("load", () => {
 
 			makeJsonCall('POST', 'SaveOrder', data, () => {
 				alert("Custom order saved");
-				showImageListSection(currentAlbumId, 0);		
+				showImageListSection(currentAlbumId, 0);
 			});
 		});
 
@@ -450,16 +488,7 @@ window.addEventListener("load", () => {
 
 		// Show Create Album Section
 		createAlbumBtn.addEventListener('click', () => {
-			albumSection.style.display = 'none';
-			createAlbumSection.style.display = 'block';
-			sortImageListSection.style.display = 'none';
-			homeLink.style.display = 'inline'; // Ensure homeLink is visible when creating an album
-
-			// Load user images when the user clicks to create an album
-			makeCall('GET', 'ViewCreateAlbum', null, (response) => {
-				const images = JSON.parse(response.responseText);
-				populateUserImages(images);
-			});
+			showCreateAlbumSection();
 		});
 
 		// Populate the images in the Create Album section
@@ -501,6 +530,31 @@ window.addEventListener("load", () => {
 			} else {
 				alert("Album title cannot be empty.");
 			}
+		});
+
+		// Submit Upload image form
+		uploadImageSection.querySelector('form').addEventListener('submit', function(event) {
+			event.preventDefault();
+
+			// Controllo lato client per assicurarsi che i campi non siano vuoti e che solo un file venga caricato
+			if (!uploadImageTitle.value.trim()) {
+				alert("Name field cannot be empty.");
+				return;
+			}
+			if (!uploadImageTitle.value.trim()) {
+				alert("Description field cannot be empty.");
+				return;
+			}
+			if (uploadImageFile.files.length !== 1) {
+				alert("Please upload exactly one image.");
+				return;
+			}
+
+			const formData = new FormData(this);
+			makeCall('POST', 'UploadImage', formData, () => {
+				alert("Image uploaded successfully!");
+				showCreateAlbumSection();
+			});
 		});
 
 		// Logout event listener

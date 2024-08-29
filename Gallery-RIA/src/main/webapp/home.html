@@ -42,6 +42,31 @@
 			<button type="submit" value="create" class="btn btn-primary">Create album</button>
 		</div>
 	</form>
+	<div class="center">
+		<a href="#" id="uploadImageBtn" class="btn-primary">Upload image</a>
+	</div>
+	</div>
+	
+	<div id="uploadImageSection" style="display: none;">
+		<form action="#" enctype="multipart/form-data">
+			<div>
+				<label for="uploadImageTitle">Title:</label> <input type="text"
+					id="uploadImageTitle" name="uploadImageTitle"
+					placeholder="Enter image name">
+			</div>
+			<div>
+				<label for="uploadImageFile">Select image to upload:</label> <input
+					type="file" id="uploadImageFile" name="uploadImageFile" accept="image/*" required>
+			</div>
+			<div>
+				<label for="uploadImageDescription">Description:</label> <input type="text"
+					id="uploadImageDescription" name="uploadImageDescription"
+					placeholder="Enter image description">
+			</div>
+			<div>
+				<button type="submit">Upload Image</button>
+			</div>
+		</form>
 	</div>
 
 	<!-- Album images -->
