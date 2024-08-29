@@ -18,7 +18,7 @@
 	</header>
 	<div class="image-container">
 		<span th:text="${clickedImage.title}" class="image-title">title</span>
-		<img th:src="@{'images/'+${clickedImage.path}}" class="big">
+		<img th:src="@{/imageGetter(imageName=${clickedImage.path})}" class="big">
 		<div class="image-info">
 			<span th:text="${clickedImage.description}">description</span>
 			<span th:text="'Image uploaded by '+${clickedImage.user.username}">user</span>

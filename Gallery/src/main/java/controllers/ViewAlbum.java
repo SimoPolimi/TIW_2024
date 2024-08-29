@@ -106,6 +106,8 @@ public class ViewAlbum extends HttpServlet {
 		webContext.setVariable("images", images);
 		webContext.setVariable("currentPage", pageNumber);
 		webContext.setVariable("totalPages", totalPages);
+		// Image directory
+		//webContext.setVariable("imagePath", getServletContext().getInitParameter("imagePath"));
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 

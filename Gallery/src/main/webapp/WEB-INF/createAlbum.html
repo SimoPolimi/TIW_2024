@@ -21,8 +21,7 @@
 		<div class="image-grid">
 			<div th:each="i:${images}" class="image-item">
 				<span th:text="${i.title}">title</span>
-				<!--  <img th:src="@{'data:images/png;base64,'+${i.path}}"> -->
-				<img th:src="@{'images/'+${i.path}}"> <input type="checkbox"
+				<img th:src="@{/imageGetter(imageName=${i.path})}"> <input type="checkbox"
 					name="selectedImages" th:value="${i.id}">
 			</div>
 		</div>

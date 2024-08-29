@@ -28,9 +28,9 @@
 				<div th:if="${i != null}">
 					<span th:text="${i.title}">title</span>
 					<a th:href="@{/ViewImage(imageId=${i.Id}, albumId=${param.albumId}, pageNumber=${param.pageNumber})}">
-						<img th:src="@{'images/'+${i.path}}" class="in-album">
-					</a>
+					<img th:src="@{/imageGetter(imageName=${i.path})}" class="in-album">
 					<!-- <span th:text="${i.creation_date}">creation date</span> -->
+					</a>
 				</div>
 				<!-- Image not present -->
 				<div th:if="${i == null}" class="empty-cell"></div>
