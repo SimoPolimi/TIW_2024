@@ -30,7 +30,29 @@
 		</div>
 	</form>
 	<div class="center">
-					<a href="ViewUploadImage" class="btn-primary">Upload image</a>
-		</div>
+	<div class="card">
+		<h2>Upload your image here</h2>
+		<form action="UploadImage" method="post" enctype="multipart/form-data">
+			<div>
+				<label for="name">Name:</label> <input type="text"
+					id="name" name="name"
+					placeholder="Enter image name">
+			</div>
+			<div>
+				<label for="image">Select image to upload:</label> <input
+					type="file" id="image" name="image" accept="image/*" required>
+			</div>
+			<div>
+				<label for="description">Description:</label> <input type="text"
+					id="description" name="description"
+					placeholder="Enter image description">
+			</div>
+			<div>
+				<button type="submit">Upload Image</button>
+			</div>
+		</form>
+	</div>
+	</div>
+		
 </body>
 </html>

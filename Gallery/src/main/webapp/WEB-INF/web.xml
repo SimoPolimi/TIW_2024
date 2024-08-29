@@ -24,7 +24,6 @@
   <filter-mapping>
     <filter-name>CheckLogin</filter-name>
     <url-pattern>/ViewHome</url-pattern>
-    <url-pattern>/ViewUploadImage</url-pattern>
     <url-pattern>/CreateAlbum</url-pattern>
     <url-pattern>/ImageGetter</url-pattern>
     <url-pattern>/DeleteImage</url-pattern>

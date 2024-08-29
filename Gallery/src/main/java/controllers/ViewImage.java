@@ -70,7 +70,7 @@ public class ViewImage extends HttpServlet {
 		List<Comment> comments = new ArrayList<Comment>();
 		
 		try {
-			comments = commentDAO.getImageComments(Integer.parseInt(request.getParameter("imageId")));
+			comments = commentDAO.getImageComments(imageId);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find image comments.");
 			return;
