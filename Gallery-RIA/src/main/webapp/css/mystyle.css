@@ -6,6 +6,10 @@ h1, span {
 	text-align: center;
 }
 
+a:visited {
+	color: #FF8c00;
+}
+
 body.login {
 	background-color: #f8f9fa;
 	display: flex;

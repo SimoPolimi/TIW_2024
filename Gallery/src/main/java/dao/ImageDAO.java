@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -123,6 +124,22 @@ public class ImageDAO {
 
         try (PreparedStatement pstatement = connection.prepareStatement(query)) {
             pstatement.setInt(1, imageId);
+            pstatement.executeUpdate();
+        } catch (SQLException e) {
+			throw new SQLException(e);
+		}
+        return;
+    }
+	
+	public void uploadImage(int userId, String title, Date date, String description, String path) throws SQLException {
+        String query = "INSERT INTO image (id_user, title, creation_date, description, path) VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+            pstatement.setInt(1, userId);
+            pstatement.setString(2, title);
+            pstatement.setDate(3, date);
+            pstatement.setString(4, description);
+            pstatement.setString(5, path);
             pstatement.executeUpdate();
         } catch (SQLException e) {
 			throw new SQLException(e);

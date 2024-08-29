@@ -48,7 +48,7 @@ public class WriteComment extends HttpServlet {
 		
 		// Check parameter is present
 		if (text == null || text.isEmpty()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing text");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing text.");
 			return;
 		}
 		
@@ -60,7 +60,9 @@ public class WriteComment extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Unable to find image, invalid input.");
             return;
-        }		int userId = ((User)request.getSession().getAttribute("user")).getId();
+        }		
+		
+		int userId = ((User)request.getSession().getAttribute("user")).getId();
 		
 		// TODO: do better
 		try {
