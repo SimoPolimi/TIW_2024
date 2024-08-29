@@ -354,7 +354,8 @@ window.addEventListener("load", () => {
 			imageTitle.textContent = image.title;
 
 			const thumbnail = document.createElement('img');
-			thumbnail.setAttribute('src', `images/${image.path}`);
+			//thumbnail.setAttribute('src', `images/${image.path}`);
+			thumbnail.setAttribute('src', `/Gallery/imageGetter?imageName=${encodeURIComponent(image.path)}`);
 			thumbnail.className = "in-album";
 
 			// Define the mouseOverHandler function
@@ -377,7 +378,7 @@ window.addEventListener("load", () => {
 			const image = images.find(img => img.id === imageId);
 
 			if (image) {
-				modalImage.setAttribute('src', `images/${image.path}`);
+				modalImage.setAttribute('src', `/Gallery/imageGetter?imageName=${encodeURIComponent(image.path)}`);
 				modalImageTitle.textContent = image.title;
 				modalImageDescription.textContent = image.description;
 
@@ -501,7 +502,7 @@ window.addEventListener("load", () => {
 				imageDiv.className = "image-item";
 
 				const thumbnail = document.createElement('img');
-				thumbnail.setAttribute('src', `images/${image.path}`);
+				thumbnail.setAttribute('src', `/Gallery/imageGetter?imageName=${encodeURIComponent(image.path)}`);
 				thumbnail.className = "thumbnail";
 
 				const checkbox = document.createElement('input');
@@ -541,7 +542,7 @@ window.addEventListener("load", () => {
 				alert("Name field cannot be empty.");
 				return;
 			}
-			if (!uploadImageTitle.value.trim()) {
+			if (!uploadImageDescription.value.trim()) {
 				alert("Description field cannot be empty.");
 				return;
 			}

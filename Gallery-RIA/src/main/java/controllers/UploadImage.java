@@ -27,6 +27,8 @@ public class UploadImage extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private Connection connection;
+    private static final String IMAGE_PATH = "C:/Users/Simo/TIW_images";
+
 
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
@@ -69,7 +71,7 @@ public class UploadImage extends HttpServlet {
             return;
         }
         
-        String filePath = getServletContext().getRealPath("/images/") + File.separator + fileName;
+        String filePath = IMAGE_PATH + File.separator + fileName;
 
         // Check validity file
         String contentType = imagePart.getContentType();
