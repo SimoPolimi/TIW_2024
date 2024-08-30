@@ -15,6 +15,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import beans.User;
 import dao.ImageDAO;
 import utils.ConnectionHandler;
 
@@ -42,6 +43,21 @@ public class DeleteImage extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int imageId = Integer.parseInt(request.getParameter("imageId"));
 		ImageDAO imageDAO = new ImageDAO(connection);
+		
+		User user = (User) request.getSession().getAttribute("user");
+		boolean isMyImage = false;
+		
+		try {
+			isMyImage = imageDAO.isMyImage(imageId, user.getId());
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to check if this is your image.");
+			return;
+		}
+		
+		if(!isMyImage) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You can't delete other users' images.");
+			return;
+		}
 		
 		try {
 			imageDAO.deleteImage(imageId);

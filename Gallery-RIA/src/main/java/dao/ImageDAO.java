@@ -169,6 +169,24 @@ public class ImageDAO {
         return;
     }
 	
+	public boolean isMyImage(int imageId, int userId) throws SQLException {
+		String query = "SELECT * FROM image WHERE id = ? AND id_user = ?";
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+			pstatement.setInt(1, imageId);
+			pstatement.setInt(2, userId);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					return false;
+				else {
+					result.next();
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		}
+	}
+	
 	public void uploadImage(int userId, String title, Timestamp date, String description, String path) throws SQLException {
         String query = "INSERT INTO image (id_user, title, creation_date, description, path) VALUES (?, ?, ?, ?, ?)";
 

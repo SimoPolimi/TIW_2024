@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import beans.User;
 import dao.ImageDAO;
 import utils.ConnectionHandler;
 
@@ -32,6 +33,23 @@ public class DeleteImage extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int imageId = Integer.parseInt(request.getParameter("imageId"));
 		ImageDAO imageDAO = new ImageDAO(connection);
+		
+		User user = (User) request.getSession().getAttribute("user");
+		boolean isMyImage = false;
+		
+		try {
+			isMyImage = imageDAO.isMyImage(imageId, user.getId());
+		} catch (SQLException e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to check if this is your image.");
+			return;
+		}
+		
+		if(!isMyImage) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("You can't delete other users' images.");
+			return;
+		}
 		
 		try {
 			imageDAO.deleteImage(imageId);

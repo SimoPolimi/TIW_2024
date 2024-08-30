@@ -22,6 +22,7 @@ window.addEventListener("load", () => {
 		const sortImageListSection = document.getElementById("sortImageListSection");
 		const sortBtn = document.getElementById("sortButton");
 		const saveOrderBtn = document.getElementById("saveOrderBtn");
+		const titleList = document.getElementById('titleList');
 		const deleteImageBtn = document.getElementById("deleteImageBtn");
 
 		// Modal elements
@@ -189,6 +190,8 @@ window.addEventListener("load", () => {
 					prevPageLink.style.display = 'none';
 					nextPageLink.style.display = 'none';
 					
+					// Clean sort
+					titleList.innerHTML = '';
 					sortBtn.style.display = 'none';
 				} else {
 					// Determine which images to show based on pagination
@@ -226,7 +229,6 @@ window.addEventListener("load", () => {
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Generate title list
 		function generateSortingList(images) {
-			const titleList = document.getElementById('titleList');
 			titleList.innerHTML = "";
 
 			images.forEach(image => {
@@ -258,7 +260,7 @@ window.addEventListener("load", () => {
 			e.preventDefault();
 
 			if (dragSrcEl !== this) {
-				const dragSrcId = event.dataTransfer.getData('text/plain');
+				const dragSrcId = e.dataTransfer.getData('text/plain');
 				const dropTargetId = this.getAttribute('data-id');
 
 				// Swap HTML content
