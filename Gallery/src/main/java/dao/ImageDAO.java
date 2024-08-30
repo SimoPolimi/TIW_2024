@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import beans.Image;
@@ -148,6 +149,38 @@ public class ImageDAO {
 			throw new SQLException(e);
 		}
 	}
+	
+	public boolean areImagesOwnedByUser(List<Integer> imageIds, int userId) throws SQLException {
+	    if (imageIds == null || imageIds.isEmpty()) {
+	        return true;
+	    }
+	    
+	    // Check id IN (?,?,?)    ? equals to imageIds.size()
+	    String query = "SELECT COUNT(*) FROM image WHERE id IN (" +
+	                   String.join(",", Collections.nCopies(imageIds.size(), "?")) +
+	                   ") AND id_user = ?";
+	    
+	    try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+	        int index = 1;
+	        for (Integer imageId : imageIds) {
+	            pstatement.setInt(index++, imageId);
+	        }
+	        pstatement.setInt(index, userId);
+	        
+	        try (ResultSet result = pstatement.executeQuery()) {
+	            if (result.next()) {
+	                int count = result.getInt(1);
+	                return count == imageIds.size();
+	            } else {
+	                return false;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new SQLException(e);
+	    }
+	}
+
+
 	
 	public void uploadImage(int userId, String title, Timestamp date, String description, String path) throws SQLException {
         String query = "INSERT INTO image (id_user, title, creation_date, description, path) VALUES (?, ?, ?, ?, ?)";
