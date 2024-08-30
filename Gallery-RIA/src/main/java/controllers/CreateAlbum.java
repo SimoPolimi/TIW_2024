@@ -3,7 +3,8 @@ package controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +47,8 @@ public class CreateAlbum extends HttpServlet {
             return;
 		}
 		
-		LocalDate date = LocalDate.now();
-		java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+		LocalDateTime date = LocalDateTime.now();
+		Timestamp sqlDate = Timestamp.valueOf(date);
 		int userId = ((User)request.getSession().getAttribute("user")).getId();
 		int albumId = 0;
 		

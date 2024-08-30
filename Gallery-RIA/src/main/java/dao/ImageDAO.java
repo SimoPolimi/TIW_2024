@@ -1,10 +1,10 @@
 package dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class ImageDAO {
 					image.setId(result.getInt("id"));
 					image.setUser(userDAO.getUserById(result.getInt("id_user")));
 					image.setTitle(result.getString("title"));
-					image.setCreation_date(result.getDate("creation_date"));
+					image.setCreation_date(result.getTimestamp("creation_date"));
 					image.setDescription(result.getString("description"));
 					image.setPath(result.getString("path"));
 					return image;
@@ -61,7 +61,7 @@ public class ImageDAO {
 						image.setId(result.getInt("id"));
 						image.setUser(userDAO.getUserById(result.getInt("id_user")));
 						image.setTitle(result.getString("title"));
-						image.setCreation_date(result.getDate("creation_date"));
+						image.setCreation_date(result.getTimestamp("creation_date"));
 						image.setDescription(result.getString("description"));
 						image.setPath(result.getString("path"));
 						images.add(image);
@@ -101,7 +101,7 @@ public class ImageDAO {
 						image.setId(result.getInt("id"));
 						image.setUser(userDAO.getUserById(result.getInt("id_user")));
 						image.setTitle(result.getString("title"));
-						image.setCreation_date(result.getDate("creation_date"));
+						image.setCreation_date(result.getTimestamp("creation_date"));
 						image.setDescription(result.getString("description"));
 						image.setPath(result.getString("path"));
 						images.add(image);
@@ -132,7 +132,7 @@ public class ImageDAO {
 	
 	public List<ImageWithComments> getUserImages(int userId) throws SQLException {
 		List<ImageWithComments> images = new ArrayList<ImageWithComments>();
-		String query = "SELECT * FROM image where id_user = ?;";
+		String query = "SELECT * FROM image where id_user = ? ORDER BY creation_date DESC;";
 
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, userId);
@@ -144,7 +144,7 @@ public class ImageDAO {
 						ImageWithComments image = new ImageWithComments();
 						image.setId(result.getInt("id"));
 						image.setTitle(result.getString("title"));
-						image.setCreation_date(result.getDate("creation_date"));
+						image.setCreation_date(result.getTimestamp("creation_date"));
 						image.setDescription(result.getString("description"));
 						image.setPath(result.getString("path"));
 						images.add(image);
@@ -169,13 +169,13 @@ public class ImageDAO {
         return;
     }
 	
-	public void uploadImage(int userId, String title, Date date, String description, String path) throws SQLException {
+	public void uploadImage(int userId, String title, Timestamp date, String description, String path) throws SQLException {
         String query = "INSERT INTO image (id_user, title, creation_date, description, path) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstatement = connection.prepareStatement(query)) {
             pstatement.setInt(1, userId);
             pstatement.setString(2, title);
-            pstatement.setDate(3, date);
+            pstatement.setTimestamp(3, date);
             pstatement.setString(4, description);
             pstatement.setString(5, path);
             pstatement.executeUpdate();
@@ -184,4 +184,21 @@ public class ImageDAO {
 		}
         return;
     }
+	
+	public boolean isNewImage(String path) throws SQLException {
+		String query = "SELECT path FROM image WHERE path = ?";
+		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
+			pstatement.setString(1, path);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					return true;
+				else {
+					result.next();
+					return false;
+				}
+			}
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		}
+	}
 }

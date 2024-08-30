@@ -1,13 +1,13 @@
 package beans;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Comment {
 	
 	private int id;
 	private ImageWithComments image;
 	private User user;
-	private Date date;
+	private Timestamp date;
 	private String text;
 	
 	public int getId() {
@@ -35,11 +35,11 @@ public class Comment {
 		this.user = user;
 	}
 
-	public Date getDate() {
+	public Timestamp getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(Timestamp date) {
 		this.date = date;
 	}
 

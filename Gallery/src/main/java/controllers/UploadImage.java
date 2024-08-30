@@ -88,6 +88,21 @@ public class UploadImage extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid file type. Only image files are allowed.");
             return;
         }
+        
+        // Checks for overwrite
+        boolean isNewImage = false;
+        try {
+        	isNewImage = imageDAO.isNewImage(fileName);
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to check if image already exists.");
+			return;
+		}
+        if(!isNewImage) {
+			request.setAttribute("errorMsg", "File already existent, rename your file.");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/ViewHome");
+	        dispatcher.forward(request, response);
+            return;
+        }
 
         // Save in fileSystem
         try (InputStream inputStream = imagePart.getInputStream();
@@ -98,20 +113,6 @@ public class UploadImage extends HttpServlet {
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 fileOutputStream.write(buffer, 0, bytesRead);
             }
-        }
-        
-        boolean isNewImage = false;
-        try {
-        	isNewImage = imageDAO.isNewImage(fileName);
-		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to check if image already exists.");
-			return;
-		}
-        if(!isNewImage) {
-			request.setAttribute("errorMsg", "Please, file already existent, rename your file.");
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/ViewHome");
-	        dispatcher.forward(request, response);
-            return;
         }
 
         int userId = ((User) request.getSession().getAttribute("user")).getId();

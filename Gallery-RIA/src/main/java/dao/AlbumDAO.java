@@ -1,10 +1,10 @@
 package dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class AlbumDAO {
 						album.setId(result.getInt("id"));
 						album.setTitle(result.getString("title"));
 						album.setOwner(userDAO.getUserById(result.getInt("owner")));
-						album.setDate(result.getDate("creation_date"));
+						album.setDate(result.getTimestamp("creation_date"));
 						albums.add(album);
 					}
 				}
@@ -61,7 +61,7 @@ public class AlbumDAO {
 						album.setId(result.getInt("id"));
 						album.setTitle(result.getString("title"));
 						album.setOwner(userDAO.getUserById(result.getInt("owner")));
-						album.setDate(result.getDate("creation_date"));
+						album.setDate(result.getTimestamp("creation_date"));
 						albums.add(album);
 					}
 				}
@@ -72,13 +72,13 @@ public class AlbumDAO {
 		return albums;
 	}
 	
-	public int createAlbum(String title, int owner, Date creation_date) throws SQLException {
+	public int createAlbum(String title, int owner, Timestamp creation_date) throws SQLException {
 		 String query = "INSERT INTO album (title, owner, creation_date) VALUES (?, ?, ?)";
 		 
 		 try (PreparedStatement pstatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
 		     pstatement.setString(1, title);
 		     pstatement.setInt(2, owner);
-		     pstatement.setDate(3, creation_date);
+		     pstatement.setTimestamp(3, creation_date);
 		        
 		     int rowsUpdated = pstatement.executeUpdate();
 		        

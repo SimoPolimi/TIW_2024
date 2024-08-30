@@ -5,9 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -80,6 +80,22 @@ public class UploadImage extends HttpServlet {
             response.getWriter().println("Invalid file type. Only image files are allowed.");
             return;
         }
+        
+     // Checks for overwrite
+        boolean isNewImage = false;
+        try {
+        	isNewImage = imageDAO.isNewImage(fileName);
+		} catch (SQLException e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Database can't be reached, unable to check if image already exists.");
+			return;
+		}
+        if(!isNewImage) {
+        	
+        	response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().println("File already existent, rename your file.");
+            return;
+        }
 
         // Save in fileSystem
         try (InputStream inputStream = imagePart.getInputStream();
@@ -93,8 +109,8 @@ public class UploadImage extends HttpServlet {
         }
 
         int userId = ((User) request.getSession().getAttribute("user")).getId();
-        LocalDate date = LocalDate.now();
-        Date sqlDate = Date.valueOf(date);
+        LocalDateTime date = LocalDateTime.now();
+        Timestamp sqlDate = Timestamp.valueOf(date);
 
         try {
             imageDAO.uploadImage(userId, name, sqlDate, description, fileName);
@@ -104,7 +120,7 @@ public class UploadImage extends HttpServlet {
             return;
         }
 
-        String path = getServletContext().getContextPath() + "/ViewCreateAlbum";
+        String path = getServletContext().getContextPath() + "/ViewHome";
         response.sendRedirect(path);
     }
 }

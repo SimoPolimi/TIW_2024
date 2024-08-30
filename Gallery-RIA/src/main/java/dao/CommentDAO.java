@@ -1,10 +1,10 @@
 package dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class CommentDAO {
 						comment.setId(result.getInt("id"));
 						comment.setImage(imageDAO.getImageById(result.getInt("id_image")));
 						comment.setUser(userDAO.getUserById(result.getInt("id_user")));
-						comment.setDate(result.getDate("date"));
+						comment.setDate(result.getTimestamp("date"));
 						comment.setText(result.getString("text"));
 						comments.add(comment);
 					}
@@ -48,13 +48,13 @@ public class CommentDAO {
 	
 	
 	// int????????????????????????????
-	public int writeComment(int imageId, int userId, Date date, String text) throws SQLException {
+	public int writeComment(int imageId, int userId, Timestamp date, String text) throws SQLException {
 		String query = "INSERT INTO comment (id_image, id_user, date, text) VALUES (?, ?, ?, ?)";
 		int code = 0;		
 		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
 			pstatement.setInt(1, imageId);
 			pstatement.setInt(2, userId);
-			pstatement.setDate(3, date);
+			pstatement.setTimestamp(3, date);
 			pstatement.setString(4, text);
 			code = pstatement.executeUpdate();
 		} catch (SQLException e) {

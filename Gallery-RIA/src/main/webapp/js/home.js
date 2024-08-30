@@ -470,6 +470,9 @@ window.addEventListener("load", () => {
 
 			if (images != null) {
 				images.forEach(image => {
+					const title = document.createElement('span');
+					title.textContent = image.title;
+					
 					const imageDiv = document.createElement('div');
 					imageDiv.className = "image-item";
 
@@ -482,6 +485,7 @@ window.addEventListener("load", () => {
 					checkbox.setAttribute('name', 'selectedImages');
 					checkbox.setAttribute('value', image.id);
 
+					imageDiv.appendChild(title);
 					imageDiv.appendChild(thumbnail);
 					imageDiv.appendChild(checkbox);
 					userImagesDiv.appendChild(imageDiv);

@@ -1,6 +1,6 @@
 package beans;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class ImageWithComments {
@@ -8,7 +8,7 @@ public class ImageWithComments {
 	private int id;
 	private User user; // Username of the user who uploaded the image
 	private String title;
-	private Date creation_date;
+	private Timestamp creation_date;
 	private String description;
 	private String path;
 	private List<Comment> comments;
@@ -37,11 +37,11 @@ public class ImageWithComments {
 		this.title = title;
 	}
 
-	public Date getCreation_date() {
+	public Timestamp getCreation_date() {
 		return creation_date;
 	}
 
-	public void setCreation_date(Date creation_date) {
+	public void setCreation_date(Timestamp creation_date) {
 		this.creation_date = creation_date;
 	}
 
