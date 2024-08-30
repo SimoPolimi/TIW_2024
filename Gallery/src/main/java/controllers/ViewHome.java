@@ -27,7 +27,7 @@ import utils.ConnectionHandler;
 
 @WebServlet("/ViewHome")
 public class ViewHome extends HttpServlet {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
@@ -46,43 +46,49 @@ public class ViewHome extends HttpServlet {
 		templateResolver.setSuffix(".html");
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		AlbumDAO albumDAO = new AlbumDAO(connection);
 		List<Album> myAlbums = new ArrayList<Album>();
 		List<Album> otherAlbums = new ArrayList<Album>();
-		
+
 		ImageDAO imageDAO = new ImageDAO(connection);
-        List<Image> userImages = new ArrayList<Image>();
-		
+		List<Image> userImages = new ArrayList<Image>();
+
 		User user = (User) request.getSession().getAttribute("user");
-		
+
 		try {
 			myAlbums = albumDAO.getUserAlbums(user.getId());
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user albums.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					"Database can't be reached, unable to find user albums.");
 			return;
 		}
-		
+
 		try {
-			otherAlbums = albumDAO.getOtherUserAlbums(((User)request.getSession().getAttribute("user")).getId());
+			otherAlbums = albumDAO.getOtherUserAlbums(((User) request.getSession().getAttribute("user")).getId());
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find other albums.");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					"Database can't be reached, unable to find other albums.");
 			return;
 		}
-		
+
 		try {
-            userImages = imageDAO.getUserImages(user.getId()); // Show my images
-        } catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user images.");
+			userImages = imageDAO.getUserImages(user.getId()); // Show my images
+		} catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					"Database can't be reached, unable to find user images.");
 			return;
-        }
-		
-	
+		}
+
 		// Redirect
 		String path = "/WEB-INF/home.html";
 		ServletContext servletContext = getServletContext();
 		response.setContentType("text");
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		// Recover errorMsg from uploadImage
+		String errorMsg = (String) request.getAttribute("errorMsg");
+		webContext.setVariable("errorMsg", errorMsg);
 		// return
 		webContext.setVariable("myAlbums", myAlbums);
 		webContext.setVariable("otherAlbums", otherAlbums);

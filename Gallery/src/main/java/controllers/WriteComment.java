@@ -3,7 +3,8 @@ package controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -52,8 +53,8 @@ public class WriteComment extends HttpServlet {
 			return;
 		}
 		
-		LocalDate date = LocalDate.now();
-		java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+		LocalDateTime date = LocalDateTime.now();
+		Timestamp sqlDate = Timestamp.valueOf(date);
 		try {
 			imageId = Integer.parseInt(request.getParameter("imageId"));
         } catch (NumberFormatException e) {

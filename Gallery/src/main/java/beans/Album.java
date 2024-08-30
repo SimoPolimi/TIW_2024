@@ -1,13 +1,13 @@
 package beans;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Album {
 	
 	private int id;
 	private User owner;
 	private String title;
-	private Date date;
+	private Timestamp date;
 	
 	public int getId() {
 		return id;
@@ -33,12 +33,12 @@ public class Album {
 		this.title = title;
 	}
 
-	public Date getDate() {
+	public Timestamp getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setDate(Timestamp timestamp) {
+		this.date = timestamp;
 	}
 	
 
