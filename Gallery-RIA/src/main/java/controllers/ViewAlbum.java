@@ -79,11 +79,10 @@ public class ViewAlbum extends HttpServlet {
         
         // Check if album has 0 images
         if (images == null) {
-            // No images found, return an appropriate JSON response
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("{\"images\": [], \"hasImages\": false}");
+            response.getWriter().write(new Gson().toJson(new ArrayList<ImageWithComments>()));	// Empty array
             return;
         }
         

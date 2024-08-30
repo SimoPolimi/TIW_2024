@@ -18,8 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
 import beans.Album;
+import beans.ImageWithComments;
 import beans.User;
 import dao.AlbumDAO;
+import dao.ImageDAO;
 import utils.ConnectionHandler;
 
 @WebServlet("/ViewHome")
@@ -42,6 +44,11 @@ public class ViewHome extends HttpServlet {
 		List<Album> myAlbums = new ArrayList<Album>();
 		List<Album> otherAlbums = new ArrayList<Album>();
 		
+		ImageDAO imageDAO = new ImageDAO(connection);
+        List<ImageWithComments> userImages = new ArrayList<ImageWithComments>();
+		
+		User user = (User) request.getSession().getAttribute("user");
+		
 		try {
 			myAlbums = albumDAO.getUserAlbums(((User)request.getSession().getAttribute("user")).getId());	
 		} catch (SQLException e) {
@@ -58,9 +65,17 @@ public class ViewHome extends HttpServlet {
 			return;
 		}
 		
+		try {
+            userImages = imageDAO.getUserImages(user.getId()); // Show my images
+        } catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user images.");
+			return;
+        }
+		
 		Map<String, Object> responseMap = new HashMap<>();
 		responseMap.put("myAlbums", myAlbums);
 		responseMap.put("otherAlbums", otherAlbums);
+		responseMap.put("userImages", userImages);
 
 		String jsonResponse = new Gson().toJson(responseMap);
 
