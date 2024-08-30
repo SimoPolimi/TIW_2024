@@ -13,7 +13,7 @@ function makeCall(method, url, formData, callback) {
 			if (request.status >= 200 && request.status < 300) {
 				// Call was successful
 				callback(request);
-			} else if (request.status === 401) {
+			} else if (request.status === 403) {
 				// Unauthorized
 				alert("User not logged");
 				window.location.href = "login.html";
