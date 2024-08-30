@@ -14,8 +14,48 @@
 		Welcome back&nbsp;<span th:text="${session.user.username}">user</span>
 		<span><a href="Logout">Logout</a></span>
 	</header>	
+	<div class="createAlbumDiv">
+	<h2>Create your album:</h2>
+		<form th:action="@{/CreateAlbum}" method="post">
+			<input class="round" type="text" name="title"
+				placeholder="Write here the name of your album" required>
+				<h3>Choose the images to add in your album</h3>
+			<div class="image-grid">
+				<div th:each="i:${userImages}" class="image-item">
+					<span th:text="${i.title}">title</span> <img
+						th:src="@{/imageGetter(imageName=${i.path})}"> <input
+						type="checkbox" name="selectedImages" th:value="${i.id}">
+				</div>
+			</div>
+			<div class="center">
+				<button type="submit" value="create" class="btn btn-primary">Create
+					album</button>
+			</div>
+		</form>
+	</div>
 	<div class="center">
-		<a href="ViewCreateAlbum" class="btn-primary">Create album</a>
+		<div class="card">
+			<h2>Upload your image here</h2>
+			<form action="UploadImage" method="post"
+				enctype="multipart/form-data">
+				<div>
+					<label for="name">Name:</label> <input type="text" id="name"
+						name="name" placeholder="Enter image name">
+				</div>
+				<div>
+					<label for="image">Select image to upload:</label> <input
+						type="file" id="image" name="image" accept="image/*" required>
+				</div>
+				<div>
+					<label for="description">Description:</label> <input type="text"
+						id="description" name="description"
+						placeholder="Enter image description">
+				</div>
+				<div>
+					<button type="submit">Upload Image</button>
+				</div>
+			</form>
+		</div>
 	</div>
 	<div class="main-container">	
 		<div class="column">

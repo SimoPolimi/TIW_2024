@@ -19,8 +19,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import beans.Album;
+import beans.Image;
 import beans.User;
 import dao.AlbumDAO;
+import dao.ImageDAO;
 import utils.ConnectionHandler;
 
 @WebServlet("/ViewHome")
@@ -49,9 +51,13 @@ public class ViewHome extends HttpServlet {
 		List<Album> myAlbums = new ArrayList<Album>();
 		List<Album> otherAlbums = new ArrayList<Album>();
 		
+		ImageDAO imageDAO = new ImageDAO(connection);
+        List<Image> userImages = new ArrayList<Image>();
+		
+		User user = (User) request.getSession().getAttribute("user");
+		
 		try {
-			myAlbums = albumDAO.getUserAlbums(((User)request.getSession().getAttribute("user")).getId());
-			
+			myAlbums = albumDAO.getUserAlbums(user.getId());
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user albums.");
 			return;
@@ -64,6 +70,13 @@ public class ViewHome extends HttpServlet {
 			return;
 		}
 		
+		try {
+            userImages = imageDAO.getUserImages(user.getId()); // Show my images
+        } catch (SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database can't be reached, unable to find user images.");
+			return;
+        }
+		
 	
 		// Redirect
 		String path = "/WEB-INF/home.html";
@@ -73,6 +86,7 @@ public class ViewHome extends HttpServlet {
 		// return
 		webContext.setVariable("myAlbums", myAlbums);
 		webContext.setVariable("otherAlbums", otherAlbums);
+		webContext.setVariable("userImages", userImages);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 
