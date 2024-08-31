@@ -17,7 +17,7 @@
 			
 	</header>
 	<div class="table-container">
-	
+	<span th:text="${albumMsg}"></span>
 	<!-- pageNumber from 0 to totalPages-1 -->
 	<a th:if="${currentPage > 0 && currentPage <= totalPages-1}" th:href="@{/ViewAlbum(albumId=${param.albumId}, pageNumber=${currentPage - 1})}">Prev</a>
 	    	

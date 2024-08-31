@@ -81,6 +81,11 @@ public class ViewImage extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		response.setContentType("text");
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		
+		if(comments == null) {
+			webContext.setVariable("CommentsMsg", "There are no comments.");
+		}
+		
 		// return
 		webContext.setVariable("clickedImage", image);
 		webContext.setVariable("comments", comments);

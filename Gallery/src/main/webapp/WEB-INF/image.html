@@ -25,6 +25,7 @@
 			<i><span th:text="'('+${clickedImage.creation_date}+')'">creation date</span></i>
 		</div>
 		<h2>Comments:</h2>
+		<span th:text="${CommentsMsg}"></span>
 		<div th:each="c:${comments}">
 			<b><span th:text="${c.user.username}+':'">user</span></b>
 			<span th:text="${c.text}">comment</span>

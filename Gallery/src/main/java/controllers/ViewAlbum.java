@@ -102,6 +102,11 @@ public class ViewAlbum extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		response.setContentType("text");
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		
+		if(images == null) {
+			webContext.setVariable("albumMsg", "There are no images in this album.");
+		}
+		
 		// return
 		webContext.setVariable("images", images);
 		webContext.setVariable("currentPage", pageNumber);

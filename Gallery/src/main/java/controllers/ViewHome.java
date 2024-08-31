@@ -87,8 +87,19 @@ public class ViewHome extends HttpServlet {
 		response.setContentType("text");
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		// Recover errorMsg from uploadImage
-		String errorMsg = (String) request.getAttribute("errorMsg");
-		webContext.setVariable("errorMsg", errorMsg);
+		String errorMsg = (String) request.getAttribute("uploadErrorMsg");
+		webContext.setVariable("uploadErrorMsg", errorMsg);
+		
+		if(myAlbums == null) {
+			webContext.setVariable("myAlbumsMsg", "There are no albums.");
+		}
+		
+		if(otherAlbums == null) {
+			webContext.setVariable("otherAlbumsMsg", "There are no albums.");
+		}
+		
+		
+		
 		// return
 		webContext.setVariable("myAlbums", myAlbums);
 		webContext.setVariable("otherAlbums", otherAlbums);

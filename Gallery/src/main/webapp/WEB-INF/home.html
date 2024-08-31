@@ -14,6 +14,7 @@
 		Welcome back&nbsp;<span th:text="${session.user.username}">user</span>
 		<span><a href="Logout">Logout</a></span>
 	</header>	
+	<!-- Create album -->
 	<div class="createAlbumDiv">
 	<h2>Create your album:</h2>
 		<form th:action="@{/CreateAlbum}" method="post">
@@ -33,6 +34,8 @@
 			</div>
 		</form>
 	</div>
+	
+	<!-- Upload image -->
 	<div class="center">
 		<div class="card">
 			<h2>Upload your image here</h2>
@@ -58,9 +61,13 @@
 			<p th:text="${errorMsg}"></p>
 		</div>
 	</div>
-	<div class="main-container">	
+	
+	<!-- Albums -->
+	<div class="main-container">
+		<!-- My albums -->	
 		<div class="column">
 		<h1>My albums</h1>
+			<span th:text="${myAlbumsMsg}"></span>
 			<div th:each="a:${myAlbums}" class="album-container">
 				<span th:text="${a.title}">title</span>
 				<span th:text="'(by '+${a.owner.username}+')'">(by owner)</span> 
@@ -70,8 +77,10 @@
 				<span th:text="${a.date}">date</span>
 			</div>
 		</div>
+		<!-- Other albums -->
 		<div class="column">
 		<h1>Other albums</h1>
+			<span th:text="${otherAlbumsMsg}"></span>
 			<div th:each="a:${otherAlbums}" class="album-container">
 				<span th:text="${a.title}">title</span>
 				<span th:text="'(by '+${a.owner.username}+')'">(by owner)</span> 

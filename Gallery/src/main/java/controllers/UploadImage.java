@@ -98,7 +98,7 @@ public class UploadImage extends HttpServlet {
 			return;
 		}
         if(!isNewImage) {
-			request.setAttribute("errorMsg", "File already existent, rename your file.");
+			request.setAttribute("uploadErrorMsg", "File already existent, rename your file.");
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/ViewHome");
 	        dispatcher.forward(request, response);
             return;

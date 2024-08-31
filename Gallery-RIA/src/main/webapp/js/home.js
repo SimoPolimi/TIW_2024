@@ -91,7 +91,7 @@ window.addEventListener("load", () => {
 			} else {
 				// Display a message if no albums are available
 				const noMyAlbumsMessage = document.createElement('p');
-				noMyAlbumsMessage.textContent = 'No albums available.';
+				noMyAlbumsMessage.textContent = 'There are no albums.';
 				myAlbumsDiv.appendChild(noMyAlbumsMessage);
 			}
 
@@ -124,7 +124,7 @@ window.addEventListener("load", () => {
 			} else {
 				// Display a message if no albums are available
 				const noOtherAlbumsMessage = document.createElement('p');
-				noOtherAlbumsMessage.textContent = 'No albums available.';
+				noOtherAlbumsMessage.textContent = 'There are no albums.';
 				otherAlbumsDiv.appendChild(noOtherAlbumsMessage);
 			}
 		}
@@ -183,7 +183,7 @@ window.addEventListener("load", () => {
 					const noImagesMessage = document.createElement('tr');
 					const noImagesCell = document.createElement('td');
 					noImagesCell.colSpan = 5; // Adjust based on the number of columns in your table
-					noImagesCell.textContent = 'No images available.';
+					noImagesCell.textContent = 'There are no images in this album.';
 					noImagesMessage.appendChild(noImagesCell);
 					imageRow.appendChild(noImagesMessage);
 
@@ -377,7 +377,7 @@ window.addEventListener("load", () => {
 						modalComments.appendChild(commentDiv);
 					});
 				} else {
-					modalComments.innerHTML = '<p>No comments available.</p>';
+					modalComments.innerHTML = '<p>There are no comments.</p>';
 				}
 
 				modal.style.display = 'block';
@@ -507,6 +507,7 @@ window.addEventListener("load", () => {
 				const formData = new FormData(this);
 				makeCall('POST', 'CreateAlbum', formData, () => {
 					alert("Album created successfully!");
+					createAlbumTitle.value = '';
 					showHomeSection();
 				});
 			} else {
@@ -535,6 +536,8 @@ window.addEventListener("load", () => {
 			const formData = new FormData(this);
 			makeCall('POST', 'UploadImage', formData, () => {
 				//alert("Image uploaded successfully!");
+				uploadImageTitle.value = '';
+				uploadImageDescription.value = '';
 				showHomeSection();
 			});
 		});
