@@ -31,10 +31,17 @@ public class DeleteImage extends HttpServlet {
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int imageId = Integer.parseInt(request.getParameter("imageId"));
-		ImageDAO imageDAO = new ImageDAO(connection);
-		
+		ImageDAO imageDAO = new ImageDAO(connection);	
 		User user = (User) request.getSession().getAttribute("user");
+		
+		int imageId = 0;
+		try {
+			imageId = Integer.parseInt(request.getParameter("imageId"));
+		}catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to find image, invalid input.");
+			return;
+		}
+		
 		boolean isMyImage = false;
 		
 		try {
