@@ -176,57 +176,61 @@ window.addEventListener("load", () => {
 		function loadImagesForAlbum(albumId) {
 			if (albumId >= 0) {
 				makeCall('GET', `ViewAlbum?albumId=${albumId}`, null, (response) => {
-					images = JSON.parse(response.responseText); // Save the images data globally
-					const imageRow = document.getElementById("imageRow");
-					imageRow.innerHTML = "";
-
-					if (images.length == 0) {
-						// No images
-						const noImagesMessage = document.createElement('tr');
-						const noImagesCell = document.createElement('td');
-						noImagesCell.colSpan = 5; // Adjust based on the number of columns in your table
-						noImagesCell.textContent = 'There are no images in this album.';
-						noImagesMessage.appendChild(noImagesCell);
-						imageRow.appendChild(noImagesMessage);
-
-						prevPageLink.style.display = 'none';
-						nextPageLink.style.display = 'none';
-
-						// Clean sort
-						titleList.innerHTML = '';
-						sortBtn.style.display = 'none';
-					} else {
-						// Determine which images to show based on pagination
-						const start = currentPage * imagesPerPage;
-						const end = Math.min(start + imagesPerPage, images.length);
-
-						// Add images to the view
-						for (let i = start; i < end; i++) {
-							const image = images[i];
-							const cell = createImageCell(image);
-							imageRow.appendChild(cell);
-						}
-
-						// Add empty cells if there are less than imagesPerPage images
-						const cellsToAdd = imagesPerPage - (end - start);
-						for (let i = 0; i < cellsToAdd; i++) {
-							const emptyCell = document.createElement('td');
-							emptyCell.className = "fixed-cell";
-							imageRow.appendChild(emptyCell);
-						}
-
-						// Update pagination controls
-						totalPages = Math.ceil(images.length / imagesPerPage);
-						updatePaginationControls();
-
-						// Sorting functions
-						sortBtn.style.display = 'inline';
-						generateSortingList(images);
-						initializeDragAndDrop();
-					}
+					images = JSON.parse(response.responseText); // Salva i dati delle immagini globalmente
+					displayImages();
 				});
 			} else {
 				alert("Invalid album id.")
+			}
+		}
+
+		function displayImages() {
+			const imageRow = document.getElementById("imageRow");
+			imageRow.innerHTML = "";
+
+			if (images.length == 0) {
+				// Nessuna immagine
+				const noImagesMessage = document.createElement('tr');
+				const noImagesCell = document.createElement('td');
+				noImagesCell.colSpan = 5; // Adatta in base al numero di colonne nella tua tabella
+				noImagesCell.textContent = 'There are no images in this album.';
+				noImagesMessage.appendChild(noImagesCell);
+				imageRow.appendChild(noImagesMessage);
+
+				prevPageLink.style.display = 'none';
+				nextPageLink.style.display = 'none';
+
+				// Pulizia ordinamento
+				titleList.innerHTML = '';
+				sortBtn.style.display = 'none';
+			} else {
+				// Determina quali immagini mostrare in base alla paginazione
+				const start = currentPage * imagesPerPage;
+				const end = Math.min(start + imagesPerPage, images.length);
+
+				// Aggiungi immagini alla vista
+				for (let i = start; i < end; i++) {
+					const image = images[i];
+					const cell = createImageCell(image);
+					imageRow.appendChild(cell);
+				}
+
+				// Aggiungi celle vuote se ci sono meno immagini di imagesPerPage
+				const cellsToAdd = imagesPerPage - (end - start);
+				for (let i = 0; i < cellsToAdd; i++) {
+					const emptyCell = document.createElement('td');
+					emptyCell.className = "fixed-cell";
+					imageRow.appendChild(emptyCell);
+				}
+
+				// Aggiorna i controlli di paginazione
+				totalPages = Math.ceil(images.length / imagesPerPage);
+				updatePaginationControls();
+
+				// Funzioni di ordinamento
+				sortBtn.style.display = 'inline';
+				generateSortingList(images);
+				initializeDragAndDrop();
 			}
 		}
 
@@ -414,15 +418,15 @@ window.addEventListener("load", () => {
 		// Event listeners for pagination controls
 		prevPageLink.addEventListener('click', () => {
 			if (currentPage > 0) {
-				currentPage--; // Go to the previous page
-				showImageListSection(currentAlbumId, currentPage); // Reload images
+				currentPage--; // Vai alla pagina precedente
+				displayImages(); // Mostra le immagini senza ricaricarle
 			}
 		});
 
 		nextPageLink.addEventListener('click', () => {
 			if (currentPage < totalPages - 1) {
-				currentPage++; // Go to the next page
-				showImageListSection(currentAlbumId, currentPage); // Reload images
+				currentPage++; // Vai alla pagina successiva
+				displayImages(); // Mostra le immagini senza ricaricarle
 			}
 		});
 
