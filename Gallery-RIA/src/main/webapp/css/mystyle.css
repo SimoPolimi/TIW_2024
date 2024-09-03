@@ -87,8 +87,8 @@ div.table-container {
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin-top: 20px; /* Spazio sopra la tabella */
-    margin-bottom: 20px; /* Spazio sotto la tabella */
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 table.image-table {
