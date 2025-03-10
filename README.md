@@ -6,8 +6,15 @@ Progetto di tecnologie informatiche per il web (2023-2024)
 
 **Voto:** 27/30
 
-## Documenti
+# Documenti
+## 📜 Specifica
+Consulta la specifica tecniche del progetto:  
+➡️ [Specifica](https://github.com/SimoPolimi/TIW_2024/blob/master/Documents/Progetti_TIW_2023_2024.pdf)
 
-**Specifica:** [qui] (https://github.com/SimoPolimi/TIW_2024/blob/master/Documents/Progetti_TIW_2023_2024.pdf)
+## 📖 Documentazione
+Per maggiori dettagli sul funzionamento del progetto, leggi la documentazione completa:  
+➡️ [Documentazione](https://github.com/SimoPolimi/TIW_2024/blob/master/Documents/Documentazione_gallery.pdf)
 
-**Documentazione:** [qui] (https://github.com/SimoPolimi/TIW_2024/blob/master/Documents/Documentazione_gallery.pdf)
+## 🗄️ Creazione del Database
+Il codice SQL per la creazione del database è disponibile nel file:  
+➡️ [Crea Database SQL](https://github.com/SimoPolimi/TIW_2024/blob/master/db_progetto.sql))  
