@@ -17,4 +17,4 @@ Per maggiori dettagli sul funzionamento del progetto, leggi la documentazione co
 
 ## 🗄️ Creazione del Database
 Il codice SQL per la creazione del database è disponibile nel file:  
-➡️ [Crea Database SQL](https://github.com/SimoPolimi/TIW_2024/blob/master/db_progetto.sql))  
+➡️ [Crea Database SQL](https://github.com/SimoPolimi/TIW_2024/blob/master/db_progetto.sql)
